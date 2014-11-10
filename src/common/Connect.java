@@ -49,4 +49,6 @@ public class Connect {
         Connection con = DriverManager.getConnection(url, username, password);
         return con;
     }
+    
+    public static void main(String[] args) {}
 }
