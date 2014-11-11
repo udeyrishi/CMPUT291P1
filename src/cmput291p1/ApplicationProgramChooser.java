@@ -1,7 +1,6 @@
 package cmput291p1;
 
 import java.sql.*;
-import java.util.Scanner;
 
 import common.*;
 import prescription.*;
@@ -33,17 +32,15 @@ public class ApplicationProgramChooser {
 	};
 	
 	public ApplicationProgramChooser() {
-		io = new UIO(new Scanner(System.in));
+		io = new UIO(System.in);
 	}
 	
 	private PossibleChoices getUserInput() {
-        String user_input = "";
         String error_message = "Improper input. Please input an integer between 0 to 4, inclusive.";
         PossibleChoices user_choice;
         
         while (true) {
-        	user_input = io.getInputString("");
-        	user_choice = PossibleChoices.fromLetter(user_input);
+        	user_choice = PossibleChoices.fromLetter(io.getInputString(""));
         	if (user_choice == null)
         		System.out.println(error_message);
         	else
@@ -85,6 +82,7 @@ public class ApplicationProgramChooser {
         		return new SearchEngine(connection, io);
         		
         	case QUIT:
+        		io.cleanUp(); // Ask the UIO object to close its scanners
         		return null;
         	default:
         		System.out.println("Invalid choice.");

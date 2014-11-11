@@ -1,6 +1,7 @@
 package common;
 
 
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -9,8 +10,13 @@ import java.util.Scanner;
 public class UIO {
 	Scanner input;
 	
-	public UIO(Scanner in) {
-		this.input = in;
+	public UIO(InputStream in) {
+		this.input = new Scanner(in);
+	}
+	
+	public void cleanUp() {
+		if (input != null)
+			input.close();
 	}
 	
 	public String getInputString(String message) {
