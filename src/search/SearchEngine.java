@@ -3,14 +3,14 @@ package search;
 import java.sql.*;
 import java.util.Date;
 
-import prescription.Employee;
-import prescription.Patient;
-import prescription.Test;
-import common.UIO;
+import common.*;
 
-public class Search { 
+public class SearchEngine implements ApplicationProgram { 
 	
-	public Search(Connection connection) {
+	private Connection connection;
+	private UIO ioproc;
+	
+	public SearchEngine(Connection connection) {
 		ioproc = new UIO();
 	}
 	
@@ -41,10 +41,6 @@ public class Search {
 			System.out.println(sqle.getMessage());
 		}
 	}
-	
-	Connection connection;
-	UIO ioproc;
-
 	
 	public String getPatientTestHistory() throws NumberFormatException, SQLException {
 		String input_patient = ioproc.getInputString("Please enter patient name or number: ");

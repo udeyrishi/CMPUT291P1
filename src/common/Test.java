@@ -18,7 +18,7 @@ public class Test extends PrescriptionEntity {
 	}
 
 	@Override
-	protected Integer getIDFromName(String name) throws SQLException {
+	public Integer getIDFromName(String name) throws SQLException {
 		String query = String.format("SELECT type_id "
 				+ "FROM test_type "
 				+ "WHERE test_name = %s", name);
@@ -26,7 +26,7 @@ public class Test extends PrescriptionEntity {
 	}
 
 	@Override
-	protected String getNameFromID(Integer ID) throws SQLException {
+	public String getNameFromID(Integer ID) throws SQLException {
 		String query = String.format("SELECT test_name "
 				+ "FROM test_type "
 				+ "WHERE type_id = %d", ID);
@@ -34,7 +34,7 @@ public class Test extends PrescriptionEntity {
 	}
 	
 	@Override
-	protected Boolean isNameUnique(String name) {
+	public Boolean isNameUnique(String name) {
 		String query = String.format("SELECT COUNT(*) "
 				+ "FROM test_type "
 				+ "WHERE p.name = %s", name);

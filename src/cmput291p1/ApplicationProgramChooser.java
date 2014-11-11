@@ -2,14 +2,12 @@ package cmput291p1;
 
 import java.sql.*;
 import java.util.*;
-
 import common.*;
 import prescription.*;
 import medicaltest.*;
-/*
-import patientupdate.*;
-import searchengine.*;
-*/
+import search.*;
+
+//import patientupdate.*;
 
 public class ApplicationProgramChooser {
 	private Connection connection;
@@ -79,9 +77,10 @@ public class ApplicationProgramChooser {
         		/*
         	case PATIENT_UPDATE:
         		return new patient_update(connection);
-        	case SEARCH_ENGINE:
-        		return new search_engine(connection);
         		*/
+        	case SEARCH_ENGINE:
+        		return new SearchEngine(connection);
+        		
         	case QUIT:
         		return null;
         	default:

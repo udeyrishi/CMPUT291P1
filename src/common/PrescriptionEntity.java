@@ -198,7 +198,7 @@ public abstract class PrescriptionEntity {
 	 * @return The entity ID.
 	 * @throws SQLException is thrown if the Name isn't found in the database.
 	 */
-	protected abstract Integer getIDFromName(String name) throws SQLException;
+	public abstract Integer getIDFromName(String name) throws SQLException;
 	
 	/**
 	 * Finds and returns the entity name for the unique entity %ID. 
@@ -206,14 +206,14 @@ public abstract class PrescriptionEntity {
 	 * @return The entity name.
 	 * @throws SQLException is thrown if the ID isn't found in the database.
 	 */
-	protected abstract String getNameFromID(Integer ID) throws SQLException;
+	public abstract String getNameFromID(Integer ID) throws SQLException;
 	
 	/**
 	 * Checks if the %name is a unique name in the database.
 	 * @param name The name to check.
 	 * @return True if the name is unique, else false.
 	 */
-	protected abstract Boolean isNameUnique(String name);
+	public abstract Boolean isNameUnique(String name);
 	
 	/**
 	 * Returns the string that can be printed out as the success message, if the
