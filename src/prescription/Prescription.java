@@ -36,6 +36,7 @@ public class Prescription extends ApplicationProgram {
 	 * Takes the prescription input, and updates the database.
 	 * @throws SQLException
 	 */
+	@Override
 	public void run() throws SQLException {
 		printWelcomeMessage();
 		Boolean cont = true;

@@ -11,6 +11,7 @@ public class SearchEngine extends ApplicationProgram {
 		super(connection, io);
 	}
 	
+	@Override
 	public void run() {
 		String prompt = "MedicalTest: ";
 		printInstructionHelp();

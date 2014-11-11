@@ -19,6 +19,7 @@ public class MedicalTest extends ApplicationProgram {
 		super(connection, io);
 	}
 	
+	@Override
 	public void run(){
 		try {
 			getResultsInfo();
