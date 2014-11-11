@@ -7,21 +7,21 @@ import common.UIO;
 
 public class MedicalTest {
 
-	private UIO ioproc;
-	private Connection connection;
-	
-	private int health_care_number;
-	private int employee_number;
-	private int type_id;
-	
-	private String lab_name;
-	private String results;
-	private Date test_date;
-	
 	public MedicalTest(Connection connection){
 		ioproc = new UIO();
 		this.connection = connection;
 	}
+	
+	UIO ioproc;
+	Connection connection;
+	
+	int health_care_number;
+	int employee_number;
+	int type_id;
+	
+	String lab_name;
+	String results;
+	Date test_date;
 	
 	public void run(){
 		try {
@@ -29,22 +29,22 @@ public class MedicalTest {
 			getVerificationInfo();
 			verifyTest();
 			updateDB();
-		} catch (MedicalTestException mte) {
-			System.out.println("Process failed: " + mte.toString());
-		}
-	}
-	
-	private void getVerificationInfo() throws MedicalTestException {
-		try {
-			health_care_number = Integer.valueOf(ioproc.getInputString("Enter patient number: "));
-			employee_number = Integer.valueOf(ioproc.getInputString("Enter doctor number: "));
-			type_id = Integer.valueOf(ioproc.getInputString("Enter test type number: "));
 		} catch (NumberFormatException nfe) {
-			throw new MedicalTestException("Please enter numbers");
+			System.out.println(nfe.getMessage());
+		} catch (SQLException sqle) {
+			System.out.println(sqle.getMessage());
+		} catch (IllegalArgumentException iae) {
+			System.out.println(iae.getMessage());
 		}
 	}
 	
-	private void verifyTest() throws MedicalTestException{
+	private void getVerificationInfo() {
+		health_care_number = Integer.valueOf(ioproc.getInputString("Enter patient number: "));
+		employee_number = Integer.valueOf(ioproc.getInputString("Enter doctor number: "));
+		type_id = Integer.valueOf(ioproc.getInputString("Enter test type number: "));
+	}
+	
+	private void verifyTest() throws SQLException {
 		// Check if health_care_number was assigned a type_id by employee_number
 		// and that no test was previously done, i.e. results are null.
 		// If this is not the case, throw exception.
@@ -56,15 +56,11 @@ public class MedicalTest {
 								+ "tr.result IS NULL",
 								type_id, health_care_number, employee_number);
 		
-		try {
-			if (connection.createStatement().executeQuery(query).getRow() == 0)
-				throw new MedicalTestException("Prescription not valid");
-		} catch (SQLException se) {
-			throw new MedicalTestException("Prescription not valid");
-		}
+		if (connection.createStatement().executeQuery(query).getRow() == 0)
+			throw new IllegalArgumentException("Prescription not valid");
 	}
 	
-	private void updateDB() throws MedicalTestException {
+	private void updateDB() throws SQLException {
 		// Update rows with lab_name, results, and test_date.
 		String query = String.format("UPDATE test_record set"
 					+ "medical_lab = %s,"
@@ -76,21 +72,13 @@ public class MedicalTest {
 					lab_name, results, ioproc.getTestDateInSQLDateStringForm(test_date), 
 					type_id, health_care_number, employee_number);
 
-		try {
-			connection.createStatement().executeQuery(query).getRow();
-		} catch (SQLException se) {
-			throw new MedicalTestException("Test not updated");
-		}
+		connection.createStatement().executeQuery(query).getRow();
 	}
 	
-	private void getResultsInfo() throws MedicalTestException {
-		try {
-			lab_name = ioproc.getInputString("Enter lab name: ");
-			results = ioproc.getInputString("Enter results: ");
-			test_date = ioproc.getInputDate("Enter test date: ");
-		} catch (IllegalArgumentException iae) {
-			throw new MedicalTestException(iae.toString());
-		}
+	private void getResultsInfo() {
+		lab_name = ioproc.getInputString("Enter lab name: ");
+		results = ioproc.getInputString("Enter results: ");
+		test_date = ioproc.getInputDate("Enter test date: ");
 	}
 	
 }
