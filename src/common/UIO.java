@@ -55,7 +55,7 @@ public class UIO {
 		date.clear();
 		try {
 			date.set(Calendar.YEAR, Integer.valueOf(split_date[0]));
-			date.set(Calendar.MONTH, Integer.valueOf(split_date[1]));
+			date.set(Calendar.MONTH, Integer.valueOf(split_date[1])-1);
 			date.set(Calendar.DATE, Integer.valueOf(split_date[2]));
 			return date.getTime();
 		} catch (NumberFormatException nfe) {
