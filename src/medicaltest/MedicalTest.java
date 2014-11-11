@@ -1,7 +1,5 @@
 package medicaltest;
 
-
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.sql.*;
 
@@ -26,7 +24,7 @@ public class MedicalTest {
 	Date test_date;
 	
 	
-	public void process(){
+	public void main(){
 		try {
 			getResultsInfo();
 			getVerificationInfo();
@@ -76,7 +74,7 @@ public class MedicalTest {
 					+ "WHERE type_id = %d AND"
 					+ "patient_no = %d AND"
 					+ "employee_no = %d",
-					lab_name, results, getTestDateInSQLDateStringForm(), 
+					lab_name, results, ioproc.getTestDateInSQLDateStringForm(test_date), 
 					type_id, health_care_number, employee_number);
 
 		try {
@@ -96,8 +94,4 @@ public class MedicalTest {
 		}
 	}
 	
-	/* Inspired by Picasso and Prescription.java */
-	private String getTestDateInSQLDateStringForm() {
-		return (new SimpleDateFormat("dd-MMM-YYYY")).format(test_date);
-	}
 }
