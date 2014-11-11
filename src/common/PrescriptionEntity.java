@@ -1,4 +1,4 @@
-package prescription;
+package common;
 
 import java.sql.*;
 import java.util.*;
@@ -176,7 +176,7 @@ public abstract class PrescriptionEntity {
 	 * @param connection The connection over which the query needs to be run.
 	 * @return True if the result set has exactly 1 row, else false.
 	 */
-	protected static Boolean isResultSingleRow(String query, Connection connection) {
+	public static Boolean isResultSingleRow(String query, Connection connection) {
 		ResultSet results;
 		try {
 			results = connection.createStatement().executeQuery(query);
@@ -220,5 +220,5 @@ public abstract class PrescriptionEntity {
 	 * data recording process has been successful.
 	 * @return The string success message.
 	 */
-	protected abstract String getSuccessMessage();
+	public abstract String getSuccessMessage();
 }

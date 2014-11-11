@@ -1,4 +1,4 @@
-package prescription;
+package common;
 
 import java.sql.*;
 
@@ -43,7 +43,7 @@ public class Patient extends PrescriptionEntity {
 	}
 
 	@Override
-	protected String getSuccessMessage() {
+	public String getSuccessMessage() {
 		return String.format("Patient %s with health care number %d found.", getName(), getID());
 	}
 }

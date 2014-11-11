@@ -3,6 +3,7 @@ package prescription;
 import java.sql.*;
 import java.text.*;
 import java.util.*;
+import common.*;
 
 /**
  * The class that handles the "Prescription" application program.
@@ -10,7 +11,7 @@ import java.util.*;
  * @author udeyrishi
  *
  */
-public class Prescription {
+public class Prescription implements ApplicationProgram {
 	
 	private static Integer test_id = -1; // Keeps track of the test IDs already used
 	private PrescriptionEntity[] data;
@@ -25,6 +26,13 @@ public class Prescription {
 	 * @throws SQLException 
 	 */
 	public Prescription(Connection connection) throws IllegalArgumentException, SQLException {
+		
+		// Debug
+		if (connection == null) {
+			System.out.println("Null connection object passed to prescription");
+			throw new NullPointerException();
+		}
+		
 		if (connection.isValid(5)) {
 			data = new PrescriptionEntity[3];
 			// In the correct order of processing

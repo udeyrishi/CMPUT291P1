@@ -22,7 +22,7 @@ public class ConnectionManager {
     }
     
     
-    public Connection get_connection() throws ClassNotFoundException, SQLException, InstantiationException, IllegalAccessException {
+    public Connection getConnection() throws ClassNotFoundException, SQLException, InstantiationException, IllegalAccessException {
 		Scanner in = new Scanner(System.in);
     	String username = get_username(in);
         String password = get_password(in); // Figure out a way to hide input

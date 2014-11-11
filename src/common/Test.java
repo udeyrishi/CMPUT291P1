@@ -1,4 +1,4 @@
-package prescription;
+package common;
 
 import java.sql.*;
 
@@ -43,7 +43,7 @@ public class Test extends PrescriptionEntity {
 	}
 
 	@Override
-	protected String getSuccessMessage() {
+	public String getSuccessMessage() {
 		return String.format("Test with name %s and ID %d found.", getName(), getID());
 	}
 	
