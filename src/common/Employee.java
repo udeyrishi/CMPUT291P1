@@ -22,8 +22,12 @@ public class Employee extends PrescriptionEntity {
 		String query = String.format("SELECT d.employee_no "
 				+ "FROM doctor d, patient p "
 				+ "WHERE d.health_care_no = p.health_care_no "
-				+ "AND p.name = %s", name);
-		return connection.createStatement().executeQuery(query).getInt(1);
+				+ "AND p.name = \'%s\'", name);
+		ResultSet rs = connection.createStatement().executeQuery(query);
+		if (rs.next())
+			return rs.getInt(1);
+		else
+			throw new SQLException("Name not found");
 	}
 	
 	@Override
@@ -32,7 +36,11 @@ public class Employee extends PrescriptionEntity {
 				+ "FROM doctor d, patient p "
 				+ "WHERE d.health_care_no = p.health_care_no "
 				+ "AND d.employee_no = %d", ID);
-		return connection.createStatement().executeQuery(query).getString(1);
+		ResultSet rs = connection.createStatement().executeQuery(query);
+		if (rs.next())
+			return rs.getString(1);
+		else
+			throw new SQLException("ID not found.");
 	}
 	
 	@Override
@@ -40,13 +48,13 @@ public class Employee extends PrescriptionEntity {
 		String query = String.format("SELECT COUNT(*) "
 									+ "FROM doctor d, patient p "
 									+ "WHERE d.health_care_no = p.health_care_no "
-									+ "AND p.name = %s", name);
+									+ "AND p.name = \'%s\'", name);
 		
-		return isResultSingleRow(query, connection);
+		return isResultOne(query, connection);
 	}
 
 	@Override
 	public String getSuccessMessage() {
-		return String.format("Welcome Dr. %s (Employee No.: %d)!", getName(), getID());
+		return String.format("Welcome %s (Employee No.: %d)!", getName(), getID());
 	}
 }

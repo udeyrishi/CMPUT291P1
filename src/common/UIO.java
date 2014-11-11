@@ -15,20 +15,32 @@ public class UIO {
 	
 	public String getInputString(String message) {
 		System.out.print(message);
-		String output = input.next();
+		String output = input.nextLine();
 		return output.trim();
 	}
 	
 	public Integer getInputInteger(String message) {
-		System.out.print(message);
-		Integer output = input.nextInt();
-		return output;
+		while (true) {
+			String integer = getInputString(message);
+			try {
+				return Integer.parseInt(integer);
+			}
+			catch (NumberFormatException e) {
+				System.out.println("Invalid input. Try again.");
+			}
+		}
 	}
 	
 	public Date getInputDate(String message) {
-		System.out.print(message);
-		Date output = getDate(input.next());
-		return output;
+		while (true) {
+			String date = getInputString(message);
+			try {
+				return getDate(date);
+			}
+			catch (IllegalArgumentException e) {
+				System.out.println("Invalid input. Try again.");
+			}
+		}
 	}
 	
 	private Date getDate(String date_string) throws IllegalArgumentException {

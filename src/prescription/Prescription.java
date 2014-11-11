@@ -3,6 +3,7 @@ package prescription;
 import java.sql.*;
 import java.text.*;
 import java.util.*;
+
 import common.*;
 
 /**
@@ -41,8 +42,8 @@ public class Prescription extends ApplicationProgram {
 		printWelcomeMessage();
 		Boolean cont = true;
 		while(cont) {
-			promptForInput();
-			updateDB();
+			if (promptForInput())
+				updateDB();
 			String input = ioproc.getInputString("Press 'm' to return to main menu; any other key to add another prescription.");
 			if (input.equalsIgnoreCase("m"))
 				cont = false;
@@ -72,15 +73,17 @@ public class Prescription extends ApplicationProgram {
 	 * inputs.
 	 * @throws SQLException
 	 */
-	private void promptForInput() throws SQLException {
+	
+	private Boolean promptForInput() throws SQLException {
 		for (PrescriptionEntity entity : data) {
 			if (entity.recordInfo())
 				System.out.println(entity.getSuccessMessage());
 			else {
 				System.out.println(String.format("Info retrieval failed for %s.", entity.getDescription()));
-				return;
+				return false;
 			}
 		}
+		return true;
 	}
 	
 	/**
@@ -94,7 +97,7 @@ public class Prescription extends ApplicationProgram {
 						+ "AND test_id = %d", data[1].getID(), data[2].getID());
 		// Single row is sufficient as both health_care_no and test_id are primary
 		// keys (hence, unique) in their respective tables.
-		return (!PrescriptionEntity.isResultSingleRow(query, connection));
+		return (!PrescriptionEntity.isResultNonEmpty(query, connection));
 	}
 
 	/**
@@ -102,9 +105,10 @@ public class Prescription extends ApplicationProgram {
 	 * @throws SQLException
 	 */
 	private void storeTestRecords() throws SQLException {
+		updateTestID();
 		connection.createStatement().executeQuery(
 				    "INSERT INTO test_record VALUES("
-					+ (++test_id).toString() + ", " // Self generated test_id
+					+ test_id.toString() + ", " // Self generated test_id
 					+ data[2].getID().toString() +", " // Test type id
 					+ data[1].getID().toString() +", " // Patient health care number
 					+ data[0].getID().toString() +", " // Doctor employee number
@@ -112,6 +116,16 @@ public class Prescription extends ApplicationProgram {
 					+ "to_date('" + getCurrentDate() + "','DD-MON-YYYY'), " // today
 					+ "NULL)" // test date
 					);
+	}
+
+	private void updateTestID() throws SQLException {
+		String query = "SELECT * FROM test_record WHERE test_id = ";
+		int count = 0;
+		while(PrescriptionEntity.isResultNonEmpty(query + (++test_id).toString(), connection)) {
+			++count;
+			if (count == 0) // Overflow happened
+				throw new SQLException("Max test record limit reached");
+		}
 	}
 
 	/**
@@ -131,7 +145,7 @@ public class Prescription extends ApplicationProgram {
 		for (int i = 0; i < Heading.length(); ++i)
 			dashes.append("-");
 		
-		System.out.println("\n\n\n" + Heading);
+		System.out.println(Heading);
 		System.out.println(dashes.toString());
 	}
 

@@ -39,23 +39,27 @@ public abstract class PrescriptionEntity {
 		System.out.println(String.format("Please enter your %s information.", description.toLowerCase()));
 		Integer option = getInfoInputMethod();
 		
-		if (option.equals(1)) {
-			if (!getInfoUsingName()) {
-				// Conflict
-				System.out.println(String.format("Name not found, or is not unique. Try using %s ID.", description.toLowerCase()));
-				option = 0;
+		while (true) {
+			Boolean result = (option.equals(1)) ? getInfoUsingName() : getInfoUsingID();
+			if (!result) {
+				if (option.equals(1))
+					System.out.println(String.format("%s name not found, or is not unique.", description));
+				else
+					System.out.println(String.format("%s ID not found.", description));
+				String option2 = io.getInputString("Press 'q' to quit, anything else to try again.");
+				if (option2.equalsIgnoreCase("q")) {
+					is_done = false;
+					return false;
+				}
+				else
+					option = getInfoInputMethod();
+			}
+			
+			else {
+				is_done = true;
+				return true;
 			}
 		}
-		
-		if (option.equals(0)) {
-			if (!getInfoUsingID()) {
-				System.out.println(String.format("%s ID not found in the database.", description));
-				return (is_done = false);
-			}
-		}
-		
-		// Success
-		return (is_done = true);
 	}
 	
 	/**
@@ -163,22 +167,48 @@ public abstract class PrescriptionEntity {
 
 	/**
 	 * Static method that runs the %query using the %connection, and checks if the result
-	 * set contains just 1 row (unique result).
+	 * set contains non zero rows.
 	 * @param query The query to be run.
 	 * @param connection The connection over which the query needs to be run.
 	 * @return True if the result set has exactly 1 row, else false.
 	 */
-	public static Boolean isResultSingleRow(String query, Connection connection) {
+	public static Boolean isResultNonEmpty(String query, Connection connection) {
 		ResultSet results;
 		try {
-			results = connection.createStatement().executeQuery(query);
-			
-			results.last();
-			return results.getRow() == 1;
+			results = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE).executeQuery(query);
+			if (results.next() && results.last()) {
+				return results.getRow() > 0;
+			}
+			else
+				return false;
 		} 
 		catch (SQLException e) {
-			System.out.println("Something went wrong in isNameUniqueHelper.");
-			e.printStackTrace();
+			//System.out.println("Something went wrong in isNameUniqueHelper.");
+			//e.printStackTrace();
+			return false;
+		}
+	}
+	
+	/**
+	 * Static method that runs the %query using the %connection, and checks if the result's
+	 * first row's first column is 1.
+	 * @param query The query to be run.
+	 * @param connection The connection over which the query needs to be run.
+	 * @return True if the result set has exactly 1 row, else false.
+	 */
+	public static Boolean isResultOne(String query, Connection connection) {
+		ResultSet results;
+		try {
+			results = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE).executeQuery(query);
+			if (results.next() && results.last()) {
+				return results.getInt(1) == 1;
+			}
+			else
+				return false;
+		} 
+		catch (SQLException e) {
+			//System.out.println("Something went wrong in isNameUniqueHelper.");
+			//e.printStackTrace();
 			return false;
 		}
 	}

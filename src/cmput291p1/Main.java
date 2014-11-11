@@ -25,9 +25,7 @@ public class Main {
     	} 
     	
     	catch (SQLException e) {
-			System.out.println("SQLException was thrown. Please check the connection.");
-			System.out.println("Debug information: ");
-			e.printStackTrace();
+			System.out.println(e.getMessage());
 		}
     }
 }

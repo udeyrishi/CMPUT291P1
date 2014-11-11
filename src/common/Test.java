@@ -21,8 +21,12 @@ public class Test extends PrescriptionEntity {
 	public Integer getIDFromName(String name) throws SQLException {
 		String query = String.format("SELECT type_id "
 				+ "FROM test_type "
-				+ "WHERE test_name = %s", name);
-		return connection.createStatement().executeQuery(query).getInt(1);
+				+ "WHERE test_name = \'%s\'", name);
+		ResultSet rs = connection.createStatement().executeQuery(query);
+		if (rs.next())
+			return rs.getInt(1);
+		else
+			throw new SQLException("Name not found.");
 	}
 
 	@Override
@@ -30,16 +34,20 @@ public class Test extends PrescriptionEntity {
 		String query = String.format("SELECT test_name "
 				+ "FROM test_type "
 				+ "WHERE type_id = %d", ID);
-		return connection.createStatement().executeQuery(query).getString(1);
+		ResultSet rs = connection.createStatement().executeQuery(query);
+		if (rs.next())
+			return rs.getString(1);
+		else
+			throw new SQLException("ID not found");
 	}
 	
 	@Override
 	public Boolean isNameUnique(String name) {
 		String query = String.format("SELECT COUNT(*) "
 				+ "FROM test_type "
-				+ "WHERE p.name = %s", name);
+				+ "WHERE test_name = \'%s\'", name);
 
-		return isResultSingleRow(query, connection);
+		return isResultOne(query, connection);
 	}
 
 	@Override
