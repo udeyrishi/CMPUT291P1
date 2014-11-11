@@ -5,8 +5,8 @@ import java.util.*;
 
 import common.*;
 import prescription.*;
-/*
 import medicaltest.*;
+/*
 import patientupdate.*;
 import searchengine.*;
 */
@@ -73,9 +73,10 @@ public class ApplicationProgramChooser {
         switch (user_choice) {
         	case PRESCRIPTION:
         		return new Prescription(connection);
-        		/*
+        		
         	case MEDICAL_TEST:
-        		return new medical_test(connection);
+        		return new MedicalTest(connection);
+        		/*
         	case PATIENT_UPDATE:
         		return new patient_update(connection);
         	case SEARCH_ENGINE:

@@ -3,25 +3,25 @@ package medicaltest;
 import java.util.Date;
 import java.sql.*;
 
-import common.UIO;
+import common.*;
 
-public class MedicalTest {
+public class MedicalTest implements ApplicationProgram {
 
+	private UIO ioproc;
+	private Connection connection;
+	
+	private int health_care_number;
+	private int employee_number;
+	private int type_id;
+	
+	private String lab_name;
+	private String results;
+	private Date test_date;
+	
 	public MedicalTest(Connection connection){
 		ioproc = new UIO();
 		this.connection = connection;
 	}
-	
-	UIO ioproc;
-	Connection connection;
-	
-	int health_care_number;
-	int employee_number;
-	int type_id;
-	
-	String lab_name;
-	String results;
-	Date test_date;
 	
 	public void run(){
 		try {
