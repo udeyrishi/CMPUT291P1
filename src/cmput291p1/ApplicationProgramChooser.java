@@ -61,7 +61,7 @@ public class ApplicationProgramChooser {
         System.out.println("Please enter '4' to exit the program.");
     }
 	
-	public ApplicationProgram getApplicationProgram() throws IllegalArgumentException, SQLException, ClassNotFoundException, InstantiationException, IllegalAccessException {
+	public ApplicationProgram getApplicationProgram() throws SQLException {
 		if (connection == null)
 	        connection = (new ConnectionManager()).getConnection();
 		

@@ -23,27 +23,31 @@ public class Prescription implements ApplicationProgram {
 	 * @param connection The java.sql.Connection object. The connection to the remote
 	 * server should have been established.
 	 * @throws IllegalArgumentException is thrown if connection to the server is not established.
-	 * @throws SQLException 
 	 */
-	public Prescription(Connection connection) throws IllegalArgumentException, SQLException {
+	public Prescription(Connection connection) throws IllegalArgumentException {
 		
 		// Debug
-		if (connection == null) {
-			System.out.println("Null connection object passed to prescription");
-			throw new NullPointerException();
+		if (connection == null)
+			throw new IllegalArgumentException("Null connection object passed to prescription");
+		
+		try {
+			if (connection.isValid(5)) {
+				data = new PrescriptionEntity[3];
+				// In the correct order of processing
+				data[0] = new Employee(connection);
+				data[1] = new Patient(connection);
+				data[2] = new Test(connection);
+				this.connection = connection;
+			}
+			
+			else
+				throw new IllegalArgumentException("Connection to server not established.");
 		}
 		
-		if (connection.isValid(5)) {
-			data = new PrescriptionEntity[3];
-			// In the correct order of processing
-			data[0] = new Employee(connection);
-			data[1] = new Patient(connection);
-			data[2] = new Test(connection);
-			this.connection = connection;
+		catch (SQLException e) {
+			throw new IllegalArgumentException("SQLException was thrown while trying to use the Connection object. Invalid connection object passed.");
 		}
 		
-		else
-			throw new IllegalArgumentException("Connection to server not established.");
 	}
 	
 	/**

@@ -6,7 +6,7 @@ import java.util.Scanner;
 public class ConnectionManager {
 	public ConnectionManager() {}
 	
-    private String get_username(Scanner in) {
+    private String getUsername(Scanner in) {
         // Returns a String containing a SQL-PLUS username, as inputed by the user.
 
         System.out.println("Please enter your SQL Plus username.");
@@ -14,7 +14,7 @@ public class ConnectionManager {
     }
     
     
-    private String get_password(Scanner in) {
+    private String getPassword(Scanner in) {
         // Returns a String containing a SQL-PLUS password, as inputed by the user.
 
         System.out.println("Please enter your SQL Plus password.");
@@ -22,17 +22,24 @@ public class ConnectionManager {
     }
     
     
-    public Connection getConnection() throws ClassNotFoundException, SQLException, InstantiationException, IllegalAccessException {
+    public Connection getConnection() throws SQLException {
 		Scanner in = new Scanner(System.in);
-    	String username = get_username(in);
-        String password = get_password(in); // Figure out a way to hide input
+    	String username = getUsername(in);
+        String password = getPassword(in); // Figure out a way to hide input
         in.close();
-        String m_driverName = "oracle.jdbc.driver.OracleDriver";
-        Class<?> drvClass = Class.forName(m_driverName);
-        DriverManager.registerDriver((Driver)drvClass.newInstance());        
-        DriverManager.setLoginTimeout(5);
         String url = "jdbc:oracle:thin:@gwynne.cs.ualberta.ca:1521:CRS";
-        Connection con = DriverManager.getConnection(url, username, password);
-        return con;
+        String m_driverName = "oracle.jdbc.driver.OracleDriver";
+        
+        try {
+        	Class<?> drvClass = Class.forName(m_driverName);
+			DriverManager.registerDriver((Driver)drvClass.newInstance());
+			DriverManager.setLoginTimeout(5);
+			return DriverManager.getConnection(url, username, password);
+        } 
+        catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
+			// Should never reach here.
+        	System.out.println("Something went wrong in the getConnection method. Please check the settings.");
+        	return null;
+		}        
     }
 }

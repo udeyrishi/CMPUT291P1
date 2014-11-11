@@ -13,10 +13,8 @@ public class Main {
 	    		APC.getApplicationProgram().run();
     	}
     	
-		catch (IllegalArgumentException | ClassNotFoundException
-				| InstantiationException | IllegalAccessException
-				| SQLException e1) {
-			System.out.println("Something went wrong while creating or running the appropriate AP.");
+		catch (IllegalArgumentException e1) {
+			System.out.println(e1.getMessage());
 			System.out.println("Debug information: ");
 			e1.printStackTrace();
 		}
@@ -24,6 +22,12 @@ public class Main {
     	catch (NullPointerException e1) {
     		// User chose exit option
     		System.out.println("Now exiting...");
-    	}
+    	} 
+    	
+    	catch (SQLException e) {
+			System.out.println("SQLException was thrown. Please check the connection.");
+			System.out.println("Debug information: ");
+			e.printStackTrace();
+		}
     }
 }
