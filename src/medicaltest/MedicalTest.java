@@ -7,24 +7,23 @@ import common.UIO;
 
 public class MedicalTest {
 
+	private UIO ioproc;
+	private Connection connection;
+	
+	private int health_care_number;
+	private int employee_number;
+	private int type_id;
+	
+	private String lab_name;
+	private String results;
+	private Date test_date;
+	
 	public MedicalTest(Connection connection){
 		ioproc = new UIO();
 		this.connection = connection;
 	}
 	
-	UIO ioproc;
-	Connection connection;
-	
-	int health_care_number;
-	int employee_number;
-	int type_id;
-	
-	String lab_name;
-	String results;
-	Date test_date;
-	
-	
-	public void main(){
+	public void run(){
 		try {
 			getResultsInfo();
 			getVerificationInfo();
