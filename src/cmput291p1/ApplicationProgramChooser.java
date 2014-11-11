@@ -1,7 +1,8 @@
 package cmput291p1;
 
 import java.sql.*;
-import java.util.*;
+import java.util.Scanner;
+
 import common.*;
 import prescription.*;
 import medicaltest.*;
@@ -11,6 +12,7 @@ import search.*;
 
 public class ApplicationProgramChooser {
 	private Connection connection;
+	private UIO io;
 	
 	private enum PossibleChoices {
 		PRESCRIPTION("0"), MEDICAL_TEST("1"), PATIENT_UPDATE("2"), SEARCH_ENGINE("3"), QUIT("4");
@@ -30,15 +32,17 @@ public class ApplicationProgramChooser {
 	    }
 	};
 	
-	public ApplicationProgramChooser() { }
+	public ApplicationProgramChooser() {
+		io = new UIO(new Scanner(System.in));
+	}
 	
 	private PossibleChoices getUserInput() {
         String user_input = "";
-        Scanner input_stream = new Scanner(System.in);
         String error_message = "Improper input. Please input an integer between 0 to 4, inclusive.";
         PossibleChoices user_choice;
+        
         while (true) {
-        	user_input = input_stream.next().trim();
+        	user_input = io.getInputString("");
         	user_choice = PossibleChoices.fromLetter(user_input);
         	if (user_choice == null)
         		System.out.println(error_message);
@@ -46,11 +50,10 @@ public class ApplicationProgramChooser {
         		break;
         }
         
-        input_stream.close();
         return user_choice;
     }
 	
-	public static void initiateWelcomeScreen() {
+	private void initiateWelcomeScreen() {
         // Print the welcome screen.
         
         System.out.println("Welcome to the Health Care Application System!\n");
@@ -63,23 +66,23 @@ public class ApplicationProgramChooser {
 	
 	public ApplicationProgram getApplicationProgram() throws SQLException {
 		if (connection == null)
-	        connection = (new ConnectionManager()).getConnection();
+	        connection = (new ConnectionManager(io)).getConnection();
 		
 		initiateWelcomeScreen();
 		
 		PossibleChoices user_choice = getUserInput();
         switch (user_choice) {
         	case PRESCRIPTION:
-        		return new Prescription(connection);
+        		return new Prescription(connection, io);
         		
         	case MEDICAL_TEST:
-        		return new MedicalTest(connection);
+        		return new MedicalTest(connection, io);
         		/*
         	case PATIENT_UPDATE:
         		return new patient_update(connection);
         		*/
         	case SEARCH_ENGINE:
-        		return new SearchEngine(connection);
+        		return new SearchEngine(connection, io);
         		
         	case QUIT:
         		return null;

@@ -5,13 +5,10 @@ import java.util.Date;
 
 import common.*;
 
-public class SearchEngine implements ApplicationProgram { 
+public class SearchEngine extends ApplicationProgram { 
 	
-	private Connection connection;
-	private UIO ioproc;
-	
-	public SearchEngine(Connection connection) {
-		ioproc = new UIO();
+	public SearchEngine(Connection connection, UIO io) {
+		super(connection, io);
 	}
 	
 	public void run() {
@@ -44,7 +41,7 @@ public class SearchEngine implements ApplicationProgram {
 	
 	public String getPatientTestHistory() throws NumberFormatException, SQLException {
 		String input_patient = ioproc.getInputString("Please enter patient name or number: ");
-		Patient patient = new Patient(connection);
+		Patient patient = new Patient(connection, ioproc);
 		
 		if (isInteger(input_patient)) {
 			patient.getNameFromID(Integer.valueOf(input_patient));
@@ -67,7 +64,7 @@ public class SearchEngine implements ApplicationProgram {
 	
 	public String getDoctorsPrescriptionsWithinRange() throws SQLException {
 		String input_doc = ioproc.getInputString("Please enter employee name or number: ");
-		Employee doctor = new Employee(connection);
+		Employee doctor = new Employee(connection, ioproc);
 		
 		if (isInteger(input_doc)) {
 			doctor.getNameFromID(Integer.valueOf(input_doc));
@@ -94,7 +91,7 @@ public class SearchEngine implements ApplicationProgram {
 	
 	public String getAtRiskPatientsForTest() throws SQLException {
 		String input_test = ioproc.getInputString("Please enter test name: ");
-		Test test = new Test(connection);
+		Test test = new Test(connection, ioproc);
 		
 		test.getIDFromName(input_test);
 		return queryAtRiskPatientsForTest(input_test);

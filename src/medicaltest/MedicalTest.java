@@ -5,11 +5,8 @@ import java.sql.*;
 
 import common.*;
 
-public class MedicalTest implements ApplicationProgram {
+public class MedicalTest extends ApplicationProgram {
 
-	private UIO ioproc;
-	private Connection connection;
-	
 	private int health_care_number;
 	private int employee_number;
 	private int type_id;
@@ -18,9 +15,8 @@ public class MedicalTest implements ApplicationProgram {
 	private String results;
 	private Date test_date;
 	
-	public MedicalTest(Connection connection){
-		ioproc = new UIO();
-		this.connection = connection;
+	public MedicalTest(Connection connection, UIO io){
+		super(connection, io);
 	}
 	
 	public void run(){

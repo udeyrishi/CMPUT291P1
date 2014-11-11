@@ -15,16 +15,18 @@ public abstract class PrescriptionEntity {
 	private Boolean is_done; // Is the input taken from the user. If yes, is it valid?
 	private String description;
 	protected Connection connection;
+	private UIO io;
 	
 	/**
 	 * Constructor.
 	 * @param connection The java.sql.Connection object.
 	 * @param description The string description of the object.
 	 */
-	public PrescriptionEntity(Connection connection, String description) {
+	public PrescriptionEntity(Connection connection, UIO io, String description) {
 		this.connection = connection;
 		this.is_done = false;
 		this.description = description;
+		this.io = io;
 	}
 	
 	/**
@@ -96,13 +98,11 @@ public abstract class PrescriptionEntity {
 	 * @return 0 if input through ID, 1 if input through name.
 	 */
 	private Integer getInfoInputMethod() {
-		Scanner in = new Scanner(System.in);
 		Boolean IsValid = false;
 		Integer option = 0;
 		while (!IsValid) {
 			try {
-				System.out.println(String.format("Press 0 for entering the %s ID, 1 for %s name.", description, description));
-				option = in.nextInt();
+				option = io.getInputInteger(String.format("Press 0 for entering the %s ID, 1 for %s name.", description, description));
 				if (option.equals(0) || option.equals(1))
 					IsValid = true;
 				else
@@ -112,7 +112,6 @@ public abstract class PrescriptionEntity {
 			}
 		}
 		
-		in.close();
 		return option;
 	}
 	
@@ -123,11 +122,7 @@ public abstract class PrescriptionEntity {
 	 * @throws SQLException
 	 */
 	private Boolean getInfoUsingName() throws SQLException {
-		Scanner in = new Scanner(System.in);
-		
-		System.out.println(String.format("Please enter %s name as it exists in the database:", description));
-		String name = in.nextLine().trim();
-		in.close();
+		String name = io.getInputString(String.format("Please enter %s name as it exists in the database:", description));
 		if (isNameUnique(name)) {
 			// Success
 			this.name = name;
@@ -144,20 +139,17 @@ public abstract class PrescriptionEntity {
 	 * @return True if the ID is found in the database, else false.
 	 */
 	private Boolean getInfoUsingID() {
-		Scanner in = new Scanner(System.in);
 		Integer ID = null;
 		Boolean is_valid = false;
 		while(!is_valid) {
-			System.out.println(String.format("Please enter your %s ID:", description));
 			try {
-				ID = in.nextInt();
+				ID = io.getInputInteger(String.format("Please enter your %s ID:", description));
 				is_valid = true;
 			}
 			catch (InputMismatchException e) {
 				System.out.println("Invalid input. Try again.");
 			}
 		}
-		in.close();
 		
 		try {
 			this.name = getNameFromID(ID);

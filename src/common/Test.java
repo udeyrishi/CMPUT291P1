@@ -13,8 +13,8 @@ public class Test extends PrescriptionEntity {
 	 * Constructor.
 	 * @param connection The java.sql.Connection object to use.
 	 */
-	public Test(Connection connection) {
-		super(connection, "Test");
+	public Test(Connection connection, UIO io) {
+		super(connection, io, "Test");
 	}
 
 	@Override

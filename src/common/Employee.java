@@ -13,8 +13,8 @@ public class Employee extends PrescriptionEntity {
 	 * Constructor
 	 * @param connection The java.sql.Connection object to use.
 	 */
-	public Employee(Connection connection) {
-		super(connection, "Employee");
+	public Employee(Connection connection, UIO io) {
+		super(connection, io, "Employee");
 	}
 	
 	@Override

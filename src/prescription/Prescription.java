@@ -11,11 +11,10 @@ import common.*;
  * @author udeyrishi
  *
  */
-public class Prescription implements ApplicationProgram {
+public class Prescription extends ApplicationProgram {
 	
 	private static Integer test_id = -1; // Keeps track of the test IDs already used
 	private PrescriptionEntity[] data;
-	private Connection connection;
 	
 	/**
 	 * 
@@ -24,30 +23,13 @@ public class Prescription implements ApplicationProgram {
 	 * server should have been established.
 	 * @throws IllegalArgumentException is thrown if connection to the server is not established.
 	 */
-	public Prescription(Connection connection) throws IllegalArgumentException {
-		
-		// Debug
-		if (connection == null)
-			throw new IllegalArgumentException("Null connection object passed to prescription");
-		
-		try {
-			if (connection.isValid(5)) {
-				data = new PrescriptionEntity[3];
-				// In the correct order of processing
-				data[0] = new Employee(connection);
-				data[1] = new Patient(connection);
-				data[2] = new Test(connection);
-				this.connection = connection;
-			}
-			
-			else
-				throw new IllegalArgumentException("Connection to server not established.");
-		}
-		
-		catch (SQLException e) {
-			throw new IllegalArgumentException("SQLException was thrown while trying to use the Connection object. Invalid connection object passed.");
-		}
-		
+	public Prescription(Connection connection, UIO io) {
+		super(connection, io);
+		data = new PrescriptionEntity[3];
+		// In the correct order of processing
+		data[0] = new Employee(connection, io);
+		data[1] = new Patient(connection, io);
+		data[2] = new Test(connection, io);
 	}
 	
 	/**
@@ -60,12 +42,9 @@ public class Prescription implements ApplicationProgram {
 		while(cont) {
 			promptForInput();
 			updateDB();
-			System.out.println("Press 'm' to return to main menu; any other key to add another prescription.");
-			Scanner in = new Scanner(System.in);
-			String input = in.nextLine().trim();
+			String input = ioproc.getInputString("Press 'm' to return to main menu; any other key to add another prescription.");
 			if (input.equalsIgnoreCase("m"))
 				cont = false;
-			in.close();
 		}
 	}
 	

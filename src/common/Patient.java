@@ -13,8 +13,8 @@ public class Patient extends PrescriptionEntity {
 	 * Constructor.
 	 * @param connection The java.sql.Connection object to use.
 	 */
-	public Patient(Connection connection) {
-		super(connection, "Patient");
+	public Patient(Connection connection, UIO io) {
+		super(connection, io, "Patient");
 	}
 
 	@Override

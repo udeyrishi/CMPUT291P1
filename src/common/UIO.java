@@ -7,35 +7,29 @@ import java.util.Date;
 import java.util.Scanner;
 
 public class UIO {
+	Scanner input;
 	
-	public UIO() {
+	public UIO(Scanner in) {
+		this.input = in;
 	}
 	
 	public String getInputString(String message) {
 		System.out.print(message);
-		Scanner input = new Scanner(System.in);
 		String output = input.next();
-		input.close();
-		return output;
+		return output.trim();
 	}
 	
 	public Integer getInputInteger(String message) {
 		System.out.print(message);
-		Scanner input = new Scanner(System.in);
 		Integer output = input.nextInt();
-		input.close();
 		return output;
 	}
 	
 	public Date getInputDate(String message) {
 		System.out.print(message);
-		Scanner input = new Scanner(System.in);
 		Date output = getDate(input.next());
-		input.close();
 		return output;
 	}
-	
-	
 	
 	private Date getDate(String date_string) throws IllegalArgumentException {
 		String[] split_date = date_string.split("\\-");
