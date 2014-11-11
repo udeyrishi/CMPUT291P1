@@ -21,10 +21,20 @@ public class ConnectionManager {
 			DriverManager.setLoginTimeout(5);
 			return DriverManager.getConnection(url, username, password);
         } 
-        catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
+        catch (InstantiationException e) {
 			// Should never reach here.
         	System.out.println("Something went wrong in the getConnection method. Please check the settings.");
         	return null;
-		}        
+		} 
+        
+        catch (IllegalAccessException e) {
+        	System.out.println("Something went wrong in the getConnection method. Please check the settings.");
+        	return null;
+        }
+        
+        catch (ClassNotFoundException e) {
+        	System.out.println("Something went wrong in the getConnection method. Please check the settings.");
+        	return null;
+        }
     }
 }
