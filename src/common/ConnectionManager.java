@@ -21,7 +21,9 @@ public class ConnectionManager {
         	Class<?> drvClass = Class.forName(m_driverName);
 			DriverManager.registerDriver((Driver)drvClass.newInstance());
 			DriverManager.setLoginTimeout(5);
-			return DriverManager.getConnection(url, username, password);
+			Connection rv = DriverManager.getConnection(url, username, password);
+			rv.setAutoCommit(false);
+			return rv;
         } 
         catch (InstantiationException e) {
 			// Should never reach here.

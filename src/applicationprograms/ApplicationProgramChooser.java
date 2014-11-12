@@ -78,9 +78,14 @@ public class ApplicationProgramChooser {
         		
         	case QUIT:
         		io.cleanUp(); // Ask the UIO object to close its scanners
+        		connection.commit();
+        		connection.close();
         		return null;
         	default:
         		System.out.println("Invalid choice.");
+        		io.cleanUp();
+        		connection.rollback();
+        		connection.close();
         		return null;
         }
     }
