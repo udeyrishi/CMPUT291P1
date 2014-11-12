@@ -1,7 +1,9 @@
-package common;
+package prescriptionentities;
 
 import java.sql.*;
 import java.util.*;
+
+import common.UIO;
 
 /**
  * Abstract class representing any entity concerned with the prescription update 

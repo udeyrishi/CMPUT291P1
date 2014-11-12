@@ -1,9 +1,13 @@
-package prescription;
+package applicationprograms;
 
 import java.sql.*;
 import java.text.*;
 import java.util.*;
 
+import prescriptionentities.Employee;
+import prescriptionentities.Patient;
+import prescriptionentities.PrescriptionEntity;
+import prescriptionentities.Test;
 import common.*;
 
 /**

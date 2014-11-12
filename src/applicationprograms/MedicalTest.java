@@ -1,8 +1,11 @@
-package medicaltest;
+package applicationprograms;
 
 import java.util.Date;
 import java.sql.*;
 
+import prescriptionentities.Employee;
+import prescriptionentities.Patient;
+import prescriptionentities.Test;
 import common.*;
 
 public class MedicalTest extends ApplicationProgram {

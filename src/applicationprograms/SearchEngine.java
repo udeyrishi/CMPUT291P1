@@ -1,8 +1,11 @@
-package search;
+package applicationprograms;
 
 import java.sql.*;
 import java.util.Date;
 
+import prescriptionentities.Employee;
+import prescriptionentities.Patient;
+import prescriptionentities.Test;
 import common.*;
 
 public class SearchEngine extends ApplicationProgram {

@@ -1,6 +1,8 @@
-package common;
+package prescriptionentities;
 
 import java.sql.*;
+
+import common.UIO;
 
 /**
  * The class representing an employee (i.e., a doctor) who is prescribing the test.

@@ -1,6 +1,8 @@
-package common;
+package applicationprograms;
 
 import java.sql.*;
+
+import common.UIO;
 
 public abstract class ApplicationProgram {
 	protected Connection connection;
