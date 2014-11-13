@@ -17,14 +17,24 @@ public class Main {
     public static void main(String[] args) {
     	ApplicationProgramChooser APC = new ApplicationProgramChooser();
     	try {
-	    	while(true)
+	    	while(true) {
 	    		APC.getApplicationProgram().run();
+	    		APC.commitChanges();
+	    	}
+	    	
     	}
     	
 		catch (IllegalArgumentException e1) {
 			System.out.println(e1.getMessage());
+			System.out.println("Abandoning changes...");
 			System.out.println("Debug information: ");
 			e1.printStackTrace();
+			try {
+				APC.abandonChangesAndClose();
+			} catch (SQLException e) {
+				// Nothing can be done here...
+				System.out.println("abandonChangesAndClose failed.");
+			}
 		}
     	
     	catch (NullPointerException e1) {
@@ -34,6 +44,13 @@ public class Main {
     	
     	catch (SQLException e) {
 			System.out.println(e.getMessage());
+			System.out.println("Abandoning changes...");
+			try {
+				APC.abandonChangesAndClose();
+			} catch (SQLException e1) {
+				// Nothing can be done here...
+				System.out.println("abandonChangesAndClose failed.");
+			}
 		}
     }
 }

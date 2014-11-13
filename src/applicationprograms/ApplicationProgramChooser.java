@@ -109,17 +109,31 @@ public class ApplicationProgramChooser {
         		
         	case QUIT:
         		// Cleanup io, commit the transactions, and close the connection.
-        		io.cleanUp();
-        		connection.commit();
-        		connection.close();
+        		commitChangesAndClose();
         		return null;
         	default:
         		// Error occurred. Cleanup io, rollback transactions, and close the connection. 
         		System.out.println("Invalid choice.");
-        		io.cleanUp();
-        		connection.rollback();
-        		connection.close();
+        		abandonChangesAndClose();
         		return null;
         }
     }
+
+	public void commitChanges() throws SQLException {
+		if (connection == null)
+			return;
+		connection.commit();
+	}
+
+	public void commitChangesAndClose() throws SQLException {
+		io.cleanUp();
+		commitChanges();
+		connection.close();
+	}
+	
+	public void abandonChangesAndClose() throws SQLException {
+		io.cleanUp();
+		connection.rollback();
+		connection.close();
+	}
 }
