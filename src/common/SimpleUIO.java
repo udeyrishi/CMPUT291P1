@@ -17,7 +17,7 @@ import java.util.Scanner;
  *
  */
 public class SimpleUIO {
-	Scanner input;
+	private Scanner input;
 	
 	/**
 	 * Constructor.

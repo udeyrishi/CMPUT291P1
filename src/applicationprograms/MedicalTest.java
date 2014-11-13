@@ -53,7 +53,7 @@ public class MedicalTest extends ApplicationProgram {
 	 * Primary method responsible for asking
 	 * for lab results, lab name, etc. and updating the database.
 	 */
-	public void process() {
+	private void process() {
 		try {
 			getResultsInfo();
 			getVerificationInfo();
