@@ -6,6 +6,12 @@ import java.sql.*;
 
 import common.*;
 
+/**
+ * PatientUpdate is one of the four main modules of this
+ * program. It is responsible for updating or creating new
+ * patients.
+ *
+ */
 public class PatientUpdate extends ApplicationProgram {
 
     private int patient_health_care_no;
@@ -15,10 +21,20 @@ public class PatientUpdate extends ApplicationProgram {
     private String patient_phonenumber;
     private String[] patient_tests_not_allowed;
     
+    /**
+     * Constructor.
+     * @param connection is a Connection object connecting
+     * to the remote database.
+     * @param io is a UIO object for interacting with user.
+     */
     public PatientUpdate(Connection connection, UIO io) {
         super(connection, io);
     }
         
+    /**
+     * Primary method responsible for running a loop asking
+     * for patient information and updating the database.
+     */
     @Override
     public void run() throws SQLException {
         // Main portion of the PatientUpdate application.
@@ -27,39 +43,48 @@ public class PatientUpdate extends ApplicationProgram {
         while (true) {
             printWelcomeMessage();
             patient_health_care_no = ioproc.getInputInteger("");
-            if (patient_health_care_no == -1) { break; }
-            if (inDatabase(patient_health_care_no)) { runUpdateSequence(); }
-            else { createNewPatient(); }
+            if (patient_health_care_no == -1) break;
+            if (inDatabase(patient_health_care_no)) runUpdateSequence();
+            else createNewPatient();
         }
     }
     
-    public void runUpdateSequence() throws SQLException {
-        // Sequence of commands required to update a patient that already exists in the database.
-        
+    
+    /**
+     * Sequence of commands required to update a patient 
+     * that already exists in the database.
+     * @throws SQLException
+     */
+    public void runUpdateSequence() throws SQLException {    
         printPatientFoundMessage();
         obtainPatientName();
         obtainExtraPatientInformation();
         updatePatient();
     }
     
+    /**
+     * Ask the user for the name of the patient.
+     */
     public void obtainPatientName() {
-        // Ask the user for the name of the patient.
-        
         patient_name = ioproc.getInputString("Please enter the patient's new name. Enter 'skip' to skip this prompt. ");
     }
     
+    /**
+     * Ask the user for patient information.
+     */
     public void obtainExtraPatientInformation() {
-        // Ask the user for patient information.
-        
         patient_address = ioproc.getInputString("Please enter the patient's new address. Enter 'skip' to skip this prompt. ");
         patient_birthday = ioproc.getInputDate("Please enter the patient's new birthday. Enter '1111-11-11' to skip this prompt. ");
         patient_phonenumber = ioproc.getInputString("Please enter the patient's new 10-digit phone number. Enter 'skip' to skip this prompt. ");
         patient_tests_not_allowed = ioproc.getInputString("Please enter a comma separated list of Test IDs that the patient is not allowed to take. Enter 'skip' to skip this prompt").split(",");
     }
     
+    /**
+     * Update the patient table and not_allowed 
+     * table based on the patient information.
+     * @throws SQLException
+     */
     public void updatePatient() throws SQLException {
-        // Update the patient table and not_allowed table based on the patient information.
-        
         if (!isSkip(patient_name)) { updateTable("patient", "name", patient_name); }
         if (!isSkip(patient_address)) { updateTable("patient", "address", patient_address); }
         if (!isSkip(patient_birthday)) { updateTable("patient", "birth_day", ioproc.getTestDateInSQLDateStringForm(patient_birthday)); }
@@ -71,10 +96,14 @@ public class PatientUpdate extends ApplicationProgram {
         }
     }
     
+    /**
+     * Create a new patient entry in the database 
+     * based on the health care number and the given 
+     * patient name. Then, obtain the rest of the information 
+     * relating to the patient and update the database.
+     * @throws SQLException
+     */
     public void createNewPatient() throws SQLException {
-        // Create a new patient entry in the database based on the health care number and the given patient name.
-        // Then, obtain the rest of the information relating to the patient and update the database.
-        
         printNewPatientMessage();
         String choice = ioproc.getInputString("Enter 'yes' if so; otherwise, enter any other characters. ");
         if (choice.equals("yes")) {
@@ -85,23 +114,32 @@ public class PatientUpdate extends ApplicationProgram {
         updatePatient();
     }
     
+    /**
+     * Checks if a given String is equal to the skip value.
+     * @param s
+     * @return
+     */
     public boolean isSkip(String s) {
-     // Checks if a given String is equal to the skip value.
-        
         if (s.equals("skip")) { return true; }
         else return false;
     }
     
+    /**
+     * Checks if a given String array is equal to the skip value.
+     * @param s
+     * @return
+     */
     public boolean isSkip(String[] s) {
-        // Checks if a given String array is equal to the skip value.
-        
         if (s[0].equals("skip")) { return true; }
         else return false;
     }
     
+    /**
+     * Checks if a given Date is equal to the skip value.
+     * @param d
+     * @return
+     */
     public boolean isSkip(Date d) {
-        // Checks if a given Date is equal to the skip value.
-        
         Calendar date = Calendar.getInstance();
         date.setTime(d);
         if ((date.get(Calendar.YEAR) == 1111) && (date.get(Calendar.MONTH) == 11) && (date.get(Calendar.DATE) == 11)) {
@@ -110,27 +148,41 @@ public class PatientUpdate extends ApplicationProgram {
         else return false;
     }
     
-        public void updateTable(String table, String field, String value) throws SQLException {
-        // Generic fill-in-the-blank SQL command for updating a table.
-            
+    /**
+     * Generic fill-in-the-blank SQL command for updating a table.
+     * @param table
+     * @param field
+     * @param value
+     * @throws SQLException
+     */
+    public void updateTable(String table, String field, String value) throws SQLException {  
         String update = "UPDATE " + table + " "
                       + "SET " + field + " = " + "'" + value + "'"
                       + "WHERE health_care_no = " + patient_health_care_no;
         connection.createStatement().executeUpdate(update);
     }
     
+    /**
+     * Generic fill-in-the-blank SQL command for inserting into a table.
+     * @param table
+     * @param fields
+     * @param values
+     * @throws SQLException
+     */
     public void insertToTable(String table, String fields, String values) throws SQLException {
-        // Generic fill-in-the-blank SQL command for inserting into a table.
-        
         String insertion = "INSERT INTO " + table + " "
                          + "(" + fields + ") "
                          + "VALUES " + "(" + values + ")";
         connection.createStatement().executeUpdate(insertion);
     }
-        
+     
+    /**
+     * Checks if a health care number already exists in the database.
+     * @param health_care_no
+     * @return
+     * @throws SQLException
+     */
     public boolean inDatabase(int health_care_no) throws SQLException {
-        // Checks if a health care number already exists in the database.
-        
         Statement stmt = connection.createStatement();
         String query = "SELECT * FROM patient WHERE health_care_no = " + health_care_no;
         ResultSet result = stmt.executeQuery(query);
@@ -138,23 +190,30 @@ public class PatientUpdate extends ApplicationProgram {
         else return false;
     }
     
+    /**
+     * Prints message indicating that the given health care 
+     * number exists in the database. Gives the 
+     * instructions for updating a patient.
+     */
     public void printPatientFoundMessage() {
-        // Message indicating that the given health care number exists in the database.
-        // Gives the instructions for updating a patient.
-        
         System.out.println("A patient with health care number " + patient_health_care_no + " exists in the database.");
         System.out.println("Please enter the updated patient information as per the prompts.");
         System.out.println("Skipping a prompt will retain the existing patient information for that category.");
     }
     
+    /**
+     * Prints message if a new patient needs to be created.
+     * Prompts user to verify that a new user needs to be created.
+     */
     public void printNewPatientMessage() {
         System.out.println("This health care number was not found in the database.");
         System.out.println("Would you like to create a new entry in the database using this health care number?");
     }
     
+    /**
+     * Print welcome message.
+     */
     public void printWelcomeMessage() {
-        // Welcome screen.        
-        
         System.out.println("\nWelcome to the Patient Information Update application.");
         System.out.println("To begin, enter the health care number of the patient you would like to update.");
         System.out.println("If the health care number is not found in the database, a new entry will be made for you.");
