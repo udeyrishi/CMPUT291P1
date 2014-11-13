@@ -119,18 +119,33 @@ public class ApplicationProgramChooser {
         }
     }
 
+	/**
+	 * Commits all the transactions.
+	 * @throws SQLException Thrown if commit fails.
+	 */
 	public void commitChanges() throws SQLException {
 		if (connection == null)
 			return;
 		connection.commit();
 	}
 
+	/**
+	 * Cleans up the UIO resources, commits the transactions, and closes the 
+	 * connection.
+	 * @throws SQLException Thrown if committing, or closing the connection fails.
+	 */
 	public void commitChangesAndClose() throws SQLException {
 		io.cleanUp();
 		commitChanges();
 		connection.close();
 	}
 	
+	/**
+	 * Cleans up the UIO resources, abandons the transactions, and closes
+	 * the connection.
+	 * @throws SQLException Thrown if rolling back the changes, or closing the connection
+	 * fails.
+	 */
 	public void abandonChangesAndClose() throws SQLException {
 		io.cleanUp();
 		connection.rollback();
