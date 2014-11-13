@@ -6,14 +6,14 @@ import common.UIO;
 
 /**
  * The class representing the medical test to be prescribed.
- * @author udeyrishi
  *
  */
 public class Test extends PrescriptionEntity {
 
 	/**
 	 * Constructor.
-	 * @param connection The java.sql.Connection object to use.
+	 * @param connection The Connection object that has been connected to the Oracle server.
+	 * @param io The UIO object for user input.
 	 */
 	public Test(Connection connection, UIO io) {
 		super(connection, io, "Test");

@@ -3,10 +3,16 @@ import java.sql.*;
 
 import applicationprograms.ApplicationProgramChooser;
 
+/**
+ * The main application class.
+ */
 public class Main {
     
     /**
-     * The welcome program. Selects and opens application programs based on user input. 
+     * The main Java method. Uses other classes to prompt for user input, pick
+     * appropriate application program, and run it, until unless the user asks to
+     * quit.
+     * @param args Irrelevant for this program
      */
     public static void main(String[] args) {
     	ApplicationProgramChooser APC = new ApplicationProgramChooser();

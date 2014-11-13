@@ -2,13 +2,26 @@ package common;
 
 import java.sql.*;
 
+/**
+ * Manages connection with the oracle server.
+ */
 public class ConnectionManager {
 	private UIO io;
 	
+	/**
+	 * Constructor.
+	 * @param io The UIO object for handling user input.
+	 */
 	public ConnectionManager(UIO io) {
 		this.io = io;
 	}
     
+	/**
+	 * Prompts the user for their SQLPlus credentials, establishes a connection
+	 * with the Oracle server, and returns the Connection object.
+	 * @return The Connection object, which has been connected to the Oracle server.
+	 * @throws SQLException Thrown if the connection fails.
+	 */
     public Connection getConnection() throws SQLException {
     	String username = io.getInputString("Please enter your SQL Plus username: ");
         String password = io.getInputString("Please enter your SQL Plus password: ");
@@ -25,8 +38,10 @@ public class ConnectionManager {
 			rv.setAutoCommit(false);
 			return rv;
         } 
+        
+        // These exceptions should never be encountered if the above settings are
+        // correct.
         catch (InstantiationException e) {
-			// Should never reach here.
         	System.out.println("Something went wrong in the getConnection method. Please check the settings.");
         	return null;
 		} 

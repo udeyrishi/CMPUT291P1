@@ -6,9 +6,8 @@ import java.util.*;
 import common.UIO;
 
 /**
- * Abstract class representing any entity concerned with the prescription update 
- * process.
- * @author udeyrishi
+ * Abstract class representing any entity concerned with the medical test prescription
+ * process. 
  *
  */
 public abstract class PrescriptionEntity {
@@ -20,9 +19,10 @@ public abstract class PrescriptionEntity {
 	private UIO io;
 	
 	/**
-	 * Constructor.
-	 * @param connection The java.sql.Connection object.
-	 * @param description The string description of the object.
+	 * Constructor
+	 * @param connection The Connection object that has been connected to the Oracle server.
+	 * @param io The UIO object for user input.
+	 * @param description A string description of the object.
 	 */
 	public PrescriptionEntity(Connection connection, UIO io, String description) {
 		this.connection = connection;
@@ -31,23 +31,33 @@ public abstract class PrescriptionEntity {
 		this.io = io;
 	}
 	
+
 	/**
 	 * Prompts the user for all the information needed related to the entity, and 
 	 * stores it.
-	 * @return The validity of the input data.
-	 * @throws SQLException
+	 * @return True, if the recording process was successful and the data was valid,
+	 * else false.
+	 * @throws SQLException Thrown if the Connection object encounters an error.
 	 */
 	public Boolean recordInfo() throws SQLException {
 		System.out.println(String.format("Please enter your %s information.", description.toLowerCase()));
 		Integer option = getInfoInputMethod();
 		
 		while (true) {
-			Boolean result = (option.equals(1)) ? getInfoUsingName() : getInfoUsingID();
-			if (!result) {
+			if ((option.equals(1)) ? getInfoUsingName() : getInfoUsingID()) {
+				// Successfully recorded all the data.
+				is_done = true;
+				return true;
+			}
+			
+			else {
+				// Invalid data. 
 				if (option.equals(1))
 					System.out.println(String.format("%s name not found, or is not unique.", description));
 				else
 					System.out.println(String.format("%s ID not found.", description));
+				
+				// Prompt user for what he wants to do.
 				String option2 = io.getInputString("Press 'q' to quit, anything else to try again.");
 				if (option2.equalsIgnoreCase("q")) {
 					is_done = false;
@@ -57,18 +67,15 @@ public abstract class PrescriptionEntity {
 					option = getInfoInputMethod();
 			}
 			
-			else {
-				is_done = true;
-				return true;
-			}
 		}
 	}
 	
+
 	/**
-	 * Returns the unique ID of the entity. The input should have been successfully
-	 * entered before using this method.
-	 * @return The ID.
-	 * @throws IllegalStateException is thrown if the method is called without 
+	 * Returns the unique ID (employee ID, Health care number, etc.) of the entity. 
+	 * The input should have been successfully entered before calling this method.
+	 * @return The ID. Exact meaning depends on the class implementing this method.
+	 * @throws IllegalStateException Thrown if the method is called without 
 	 * recording the data successfully first.
 	 */
 	public Integer getID() throws IllegalStateException {
@@ -81,7 +88,7 @@ public abstract class PrescriptionEntity {
 	/**
 	 * Returns the name of the entity.
 	 * @return The name of the entity.
-	 @throws IllegalStateException is thrown if the method is called without 
+	 * @throws IllegalStateException Thrown if the method is called without 
 	 * recording the data successfully first.
 	 */
 	public String getName() throws IllegalStateException {
@@ -125,14 +132,21 @@ public abstract class PrescriptionEntity {
 	 * Prompts the user to input the information using the entity name.
 	 * @return The success value of the validity of the data. The data is valid only
 	 * if the name is found, and it is a unique name in the database.
-	 * @throws SQLException
 	 */
-	private Boolean getInfoUsingName() throws SQLException {
+	private Boolean getInfoUsingName() {
 		String name = io.getInputString(String.format("Please enter %s name as it exists in the database:", description));
 		if (isNameUnique(name)) {
 			// Success
 			this.name = name;
-			this.ID = getIDFromName(name);
+			try {
+				this.ID = getIDFromName(name);
+			}
+			catch (SQLException e) {
+				// This exception should never be encountered, as isNameUnique checks
+				// for the name's existence first.
+				System.out.println("Unexpected exception. Please check the implementation of isNameUnique.");
+				return false;
+			}
 			return true;
 		}
 		else
@@ -163,6 +177,7 @@ public abstract class PrescriptionEntity {
 			return true;
 		}
 		catch (SQLException e) {
+			// ID isn't found in the database.
 			return false;
 		}
 	}
@@ -172,7 +187,7 @@ public abstract class PrescriptionEntity {
 	 * set contains non zero rows.
 	 * @param query The query to be run.
 	 * @param connection The connection over which the query needs to be run.
-	 * @return True if the result set has exactly 1 row, else false.
+	 * @return True if the result set has non-zero rows, else false.
 	 */
 	public static Boolean isResultNonEmpty(String query, Connection connection) {
 		ResultSet results;
@@ -185,8 +200,7 @@ public abstract class PrescriptionEntity {
 				return false;
 		} 
 		catch (SQLException e) {
-			//System.out.println("Something went wrong in isNameUniqueHelper.");
-			//e.printStackTrace();
+			// Query failed, return false.
 			return false;
 		}
 	}
@@ -196,7 +210,7 @@ public abstract class PrescriptionEntity {
 	 * first row's first column is 1.
 	 * @param query The query to be run.
 	 * @param connection The connection over which the query needs to be run.
-	 * @return True if the result set has exactly 1 row, else false.
+	 * @return True if the result set has exactly 1 row and 1 column, and that value is integer 1, else false.
 	 */
 	public static Boolean isResultOne(String query, Connection connection) {
 		ResultSet results;
@@ -209,8 +223,7 @@ public abstract class PrescriptionEntity {
 				return false;
 		} 
 		catch (SQLException e) {
-			//System.out.println("Something went wrong in isNameUniqueHelper.");
-			//e.printStackTrace();
+			// Query failed, return false.
 			return false;
 		}
 	}
@@ -220,7 +233,7 @@ public abstract class PrescriptionEntity {
 	 * of the name exists, the ID of the first one in the result set is returned.
 	 * @param name The name to lookup in the database.
 	 * @return The entity ID.
-	 * @throws SQLException is thrown if the Name isn't found in the database.
+	 * @throws SQLException Thrown if the Name isn't found in the database.
 	 */
 	public abstract Integer getIDFromName(String name) throws SQLException;
 	
@@ -228,7 +241,7 @@ public abstract class PrescriptionEntity {
 	 * Finds and returns the entity name for the unique entity %ID. 
 	 * @param ID The ID to lookup in the database.
 	 * @return The entity name.
-	 * @throws SQLException is thrown if the ID isn't found in the database.
+	 * @throws SQLException Thrown if the ID isn't found in the database.
 	 */
 	public abstract String getNameFromID(Integer ID) throws SQLException;
 	
