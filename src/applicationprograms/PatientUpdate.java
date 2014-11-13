@@ -46,6 +46,7 @@ public class PatientUpdate extends ApplicationProgram {
             if (patient_health_care_no == -1) break;
             if (inDatabase(patient_health_care_no)) runUpdateSequence();
             else createNewPatient();
+            System.out.println("The patient has been updated successfully!");
         }
     }
     
@@ -66,7 +67,7 @@ public class PatientUpdate extends ApplicationProgram {
      * Ask the user for the name of the patient.
      */
     private void obtainPatientName() {
-        patient_name = ioproc.getInputString("Please enter the patient's new name. Enter 'skip' to skip this prompt. ");
+        patient_name = ioproc.getInputString("\nPlease enter the patient's new name. Enter 'skip' to skip this prompt. ");
     }
     
     /**
@@ -74,9 +75,9 @@ public class PatientUpdate extends ApplicationProgram {
      */
     private void obtainExtraPatientInformation() {
         patient_address = ioproc.getInputString("Please enter the patient's new address. Enter 'skip' to skip this prompt. ");
-        patient_birthday = ioproc.getInputDate("Please enter the patient's new birthday. Enter '1111-11-11' to skip this prompt. ");
+        patient_birthday = ioproc.getInputDate("Please enter the patient's new birthday (YYYY-MM-DD). Enter '1111-11-11' to skip this prompt. ");
         patient_phonenumber = ioproc.getInputString("Please enter the patient's new 10-digit phone number. Enter 'skip' to skip this prompt. ");
-        patient_tests_not_allowed = ioproc.getInputString("Please enter a comma separated list of Test IDs that the patient is not allowed to take. Enter 'skip' to skip this prompt").split(",");
+        patient_tests_not_allowed = ioproc.getInputString("Please enter a comma separated list of Test IDs that the patient is not allowed to take. Enter 'skip' to skip this prompt. ").split(",");
     }
     
     /**
@@ -91,7 +92,7 @@ public class PatientUpdate extends ApplicationProgram {
         if (!isSkip(patient_phonenumber)) { updateTable("patient", "phone", patient_phonenumber); }
         if (!isSkip(patient_tests_not_allowed)) { 
             for (String test_id : patient_tests_not_allowed) {
-                insertToTable("not_allowed", "health_care_no, type_id", Integer.toString(patient_health_care_no) + ", " + test_id);
+                insertToTable("not_allowed", "health_care_no, type_id", Integer.toString(patient_health_care_no) + ", " + test_id.trim());
             }; 
         }
     }
@@ -142,7 +143,7 @@ public class PatientUpdate extends ApplicationProgram {
     private boolean isSkip(Date d) {
         Calendar date = Calendar.getInstance();
         date.setTime(d);
-        if ((date.get(Calendar.YEAR) == 1111) && (date.get(Calendar.MONTH) == 11) && (date.get(Calendar.DATE) == 11)) {
+        if ((date.get(Calendar.YEAR) == 1111) && ((date.get(Calendar.MONTH)+1) == 11) && (date.get(Calendar.DATE) == 11)) {
             return true;
         }
         else return false;
@@ -157,7 +158,7 @@ public class PatientUpdate extends ApplicationProgram {
      */
     private void updateTable(String table, String field, String value) throws SQLException {  
         String update = "UPDATE " + table + " "
-                      + "SET " + field + " = " + "'" + value + "'"
+                      + "SET " + field + " = " + "'" + value + "' "
                       + "WHERE health_care_no = " + patient_health_care_no;
         connection.createStatement().executeUpdate(update);
     }
@@ -186,8 +187,7 @@ public class PatientUpdate extends ApplicationProgram {
         Statement stmt = connection.createStatement();
         String query = "SELECT * FROM patient WHERE health_care_no = " + health_care_no;
         ResultSet result = stmt.executeQuery(query);
-        if (result.first()) {return true;}
-        else return false;
+        return result.next();
     }
     
     /**
@@ -196,7 +196,7 @@ public class PatientUpdate extends ApplicationProgram {
      * instructions for updating a patient.
      */
     private void printPatientFoundMessage() {
-        System.out.println("A patient with health care number " + patient_health_care_no + " exists in the database.");
+        System.out.println("\nA patient with health care number " + patient_health_care_no + " exists in the database.");
         System.out.println("Please enter the updated patient information as per the prompts.");
         System.out.println("Skipping a prompt will retain the existing patient information for that category.");
     }
@@ -217,6 +217,6 @@ public class PatientUpdate extends ApplicationProgram {
         System.out.println("\nWelcome to the Patient Information Update application.");
         System.out.println("To begin, enter the health care number of the patient you would like to update.");
         System.out.println("If the health care number is not found in the database, a new entry will be made for you.");
-        System.out.println("Enter '-1' to leave this application.\n");
+        System.out.println("Enter '-1' to leave this application.");
     }
 }

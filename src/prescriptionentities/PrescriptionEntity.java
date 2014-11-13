@@ -40,7 +40,7 @@ public abstract class PrescriptionEntity {
 	 * @throws SQLException Thrown if the Connection object encounters an error.
 	 */
 	public Boolean recordInfo() throws SQLException {
-		System.out.println(String.format("Please enter your %s information.", description.toLowerCase()));
+		System.out.println(String.format("Please enter your %s information. ", description.toLowerCase()));
 		Integer option = getInfoInputMethod();
 		
 		while (true) {
@@ -53,12 +53,12 @@ public abstract class PrescriptionEntity {
 			else {
 				// Invalid data. 
 				if (option.equals(1))
-					System.out.println(String.format("%s name not found, or is not unique.", description));
+					System.out.println(String.format("%s name not found, or is not unique. ", description));
 				else
-					System.out.println(String.format("%s ID not found.", description));
+					System.out.println(String.format("%s ID not found. ", description));
 				
 				// Prompt user for what he wants to do.
-				String option2 = io.getInputString("Press 'q' to quit, anything else to try again.");
+				String option2 = io.getInputString("Press 'q' to quit, anything else to try again. ");
 				if (option2.equalsIgnoreCase("q")) {
 					is_done = false;
 					return false;
@@ -82,7 +82,7 @@ public abstract class PrescriptionEntity {
 		if (is_done)
 			return ID;
 		else
-			throw new IllegalStateException(String.format("%s info isn't collected yet.", description));
+			throw new IllegalStateException(String.format("%s info isn't collected yet. ", description));
 	}
 	
 	/**
@@ -95,7 +95,7 @@ public abstract class PrescriptionEntity {
 		if (is_done)
 			return name;
 		else
-			throw new IllegalStateException(String.format("%s info isn't collected yet.", description));
+			throw new IllegalStateException(String.format("%s info isn't collected yet. ", description));
 	}
 	
 	/**
@@ -115,13 +115,13 @@ public abstract class PrescriptionEntity {
 		Integer option = 0;
 		while (!IsValid) {
 			try {
-				option = io.getInputInteger(String.format("Press 0 for entering the %s ID, 1 for %s name.", description, description));
+				option = io.getInputInteger(String.format("Press 0 to enter the %s ID, or press 1 to enter the %s name. ", description, description));
 				if (option.equals(0) || option.equals(1))
 					IsValid = true;
 				else
 					throw new InputMismatchException();
 			} catch (InputMismatchException e) {
-				System.out.println("Invalid input. Try again.");
+				System.out.println("Invalid input. Try again. ");
 			}
 		}
 		
@@ -134,7 +134,7 @@ public abstract class PrescriptionEntity {
 	 * if the name is found, and it is a unique name in the database.
 	 */
 	private Boolean getInfoUsingName() {
-		String name = io.getInputString(String.format("Please enter %s name as it exists in the database:", description));
+		String name = io.getInputString(String.format("Please enter %s name as it exists in the database: ", description));
 		if (isNameUnique(name)) {
 			// Success
 			this.name = name;
@@ -163,7 +163,7 @@ public abstract class PrescriptionEntity {
 		Boolean is_valid = false;
 		while(!is_valid) {
 			try {
-				ID = io.getInputInteger(String.format("Please enter your %s ID:", description));
+				ID = io.getInputInteger(String.format("Please enter your %s ID: ", description));
 				is_valid = true;
 			}
 			catch (InputMismatchException e) {

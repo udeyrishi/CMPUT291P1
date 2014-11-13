@@ -44,7 +44,7 @@ public class MedicalTest extends ApplicationProgram {
 	public void run() {
 		while (true) {
 			process();
-			int quit = ioproc.getInputInteger("Return to main menu? (1/0 for yes/no) ");
+			int quit = ioproc.getInputInteger("Return to main menu? (1/0 for yes/no): ");
 			if (quit == 1) break;
 		}
 	}
@@ -55,6 +55,8 @@ public class MedicalTest extends ApplicationProgram {
 	 */
 	private void process() {
 		try {
+			System.out.println("\nMEDICAL TEST APPLICATION");
+			System.out.println("This application allows you to add the results of a (prescribed) medical test to the database.\n");
 			getResultsInfo();
 			getVerificationInfo();
 			verifyTest();
@@ -76,14 +78,14 @@ public class MedicalTest extends ApplicationProgram {
 	 * Prints a message after a successful update.
 	 */
 	private void printSuccess() {
-		System.out.println("Successfully updated medical test");
+		System.out.println("Successfully updated medical test.");
 	}
 	
 	/**
 	 * Prints a message after a failed update.
 	 */
 	private void printFailure() {
-		System.out.println("Update failed");
+		System.out.println("Update failed.");
 	}
 
 	/**
@@ -91,9 +93,9 @@ public class MedicalTest extends ApplicationProgram {
 	 * by an employee in the past. 
 	 */
 	private void getVerificationInfo() {
-		health_care_number = Integer.valueOf(ioproc.getInputString("Enter patient number: "));
-		employee_number = Integer.valueOf(ioproc.getInputString("Enter doctor number: "));
-		type_id = Integer.valueOf(ioproc.getInputString("Enter test type number: "));
+		health_care_number = Integer.valueOf(ioproc.getInputString("Please enter the patient's health care number: "));
+		employee_number = Integer.valueOf(ioproc.getInputString("Please enter the doctor's employee number: "));
+		type_id = Integer.valueOf(ioproc.getInputString("Please enter the test type number: "));
 	}
 	
 	/**
@@ -101,9 +103,9 @@ public class MedicalTest extends ApplicationProgram {
 	 * after a successful lab test. 
 	 */
 	private void getResultsInfo() {
-		lab_name = ioproc.getInputString("Enter lab name: ");
-		results = ioproc.getInputString("Enter results: ");
-		test_date = ioproc.getInputDate("Enter test date: ");
+		lab_name = ioproc.getInputString("Please enter the name of the lab where the test was conducted: ");
+		results = ioproc.getInputString("Please enter the results of the test: ");
+		test_date = ioproc.getInputDate("Please enter the date the test was conducted (YYYY-MM-DD): ");
 	}
 	
 	/**
@@ -159,7 +161,7 @@ public class MedicalTest extends ApplicationProgram {
 				lab_name);
 		
 		if (!connection.createStatement().executeQuery(query).next())
-			throw new IllegalArgumentException("Medical lab not valid");
+			throw new IllegalArgumentException("Medical lab not valid. ");
 	}
 	
 	/**
@@ -179,7 +181,7 @@ public class MedicalTest extends ApplicationProgram {
 		rset.next();
 		Date prescribed_on = rset.getDate(1);
 		if (prescribed_on.after(test_date))
-			throw new IllegalArgumentException("Test date after prescribe date not possible");
+			throw new IllegalArgumentException("Test date after prescribe date not possible. ");
 	}
 	
 	/**
@@ -200,7 +202,7 @@ public class MedicalTest extends ApplicationProgram {
 								type_id, health_care_number, employee_number);
 		
 		if (!connection.createStatement().executeQuery(query).next())
-			throw new IllegalArgumentException("Prescription not valid");
+			throw new IllegalArgumentException("Prescription not valid. ");
 	}
 	
 	/**
@@ -216,7 +218,7 @@ public class MedicalTest extends ApplicationProgram {
 				lab_name, type_id);
 		
 		if (!connection.createStatement().executeQuery(query).next())
-			throw new IllegalArgumentException("Test cannot be conducted at this lab");
+			throw new IllegalArgumentException("Test cannot be conducted at this lab. ");
 	}
 	
 	/**

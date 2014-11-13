@@ -72,7 +72,8 @@ public class ApplicationProgramChooser {
 	private void initiateWelcomeScreen() {
         // Print the welcome screen.
         
-        System.out.println("Welcome to the Health Care Application System!\n");
+        System.out.println("\nWelcome to the Health Care Application System!");
+        System.out.println("Any change to the database will only be committed upon successful exit of the program.\n");
         System.out.println("Please enter '0' to initiate the Prescription program.");
         System.out.println("Please enter '1' to initiate the Medical Test program.");
         System.out.println("Please enter '2' to initiate the Patient Information Update program.");
@@ -130,7 +131,7 @@ public class ApplicationProgramChooser {
 	}
 
 	/**
-	 * Cleans up the UIO resources, commits the transactions, and closes the 
+	 * Cleans up the UIO resources, commits the transactions, and closes the
 	 * connection.
 	 * @throws SQLException Thrown if committing, or closing the connection fails.
 	 */

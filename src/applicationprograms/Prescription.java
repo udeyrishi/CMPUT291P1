@@ -45,7 +45,7 @@ public class Prescription extends ApplicationProgram {
 		printWelcomeMessage();
 		while (true) {
 			if (promptForInput()) updateDB();
-			int quit = ioproc.getInputInteger("Return to main menu? (1/0 for yes/no) ");
+			int quit = ioproc.getInputInteger("Return to main menu? (1/0 for yes/no): ");
 			if (quit == 1) break;
 		}
 	}
@@ -140,12 +140,16 @@ public class Prescription extends ApplicationProgram {
 	 * Prints the welcome message.
 	 */
 	private void printWelcomeMessage() {
-		String Heading = "MEDICAL TEST PRESCRIPTION MODE";
+		String Heading = "\nPRESCRIPTION APPLICATION";
+		String Description1 = "This application allows you (a doctor) to prescribe a medical test to a patient.";
+		String Description2 = "You will need your empoloyee (doctor) information, the information of your patient, and the test information.\n";
 		StringBuffer dashes = new StringBuffer(Heading.length());
 		for (int i = 0; i < Heading.length(); ++i)
 			dashes.append("-");
 		
 		System.out.println(Heading);
 		System.out.println(dashes.toString());
+		System.out.println(Description1);
+		System.out.println(Description2);
 	}
 }
