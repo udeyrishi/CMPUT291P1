@@ -185,7 +185,6 @@ public class MedicalTest extends ApplicationProgram {
 	}
 	
 	/**
-	 * Verify that a prescription was a
 	 * Check if health_care_number was assigned a type_id by 
 	 * employee_number and that no test was previously done, 
 	 * i.e. results are null. If this is not the case, throw 
@@ -214,7 +213,7 @@ public class MedicalTest extends ApplicationProgram {
 		String query = String.format("SELECT * "
 				+ "FROM can_conduct " 
 				+ "WHERE lab_name = '%s' AND "
-				+ "test_id = %d",
+				+ "type_id = %d",
 				lab_name, type_id);
 		
 		if (!connection.createStatement().executeQuery(query).next())
@@ -230,7 +229,7 @@ public class MedicalTest extends ApplicationProgram {
 		String query = String.format("UPDATE test_record set "
 					+ "medical_lab = '%s', "
 					+ "result = '%s', "
-					+ "test_date = '%s' "
+					+ "test_date = %s "
 					+ "WHERE type_id = %d AND "
 					+ "patient_no = %d AND "
 					+ "employee_no = %d ",
