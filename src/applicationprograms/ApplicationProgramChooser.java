@@ -4,10 +4,18 @@ import java.sql.*;
 
 import common.*;
 
+/**
+ * Class that manages user interaction to pick an ApplicationProgram.
+ *
+ */
 public class ApplicationProgramChooser {
 	private Connection connection;
 	private UIO io;
 	
+	/**
+	 * An enum that maps all the possible user choices to a string value. 
+	 * This string value is the one that user should input.
+	 */
 	private enum PossibleChoices {
 		PRESCRIPTION("0"), MEDICAL_TEST("1"), PATIENT_UPDATE("2"), SEARCH_ENGINE("3"), QUIT("4");
 		
@@ -16,6 +24,12 @@ public class ApplicationProgramChooser {
 			this.letter = letter;
 		}
 		
+		/**
+		 * Maps a string to its equivalent PossibleChoices object.
+		 * @param letter The string to be mapped.
+		 * @return The PossibleChoices object that corresponds to the letter. Null if 
+		 * no mapping exists.
+		 */
 		public static PossibleChoices fromLetter(String letter) {
 	        for (PossibleChoices s : values()) {
 	            if (s.letter.equals(letter)) 
@@ -26,10 +40,17 @@ public class ApplicationProgramChooser {
 	    }
 	};
 	
+	/**
+	 * Constructor.
+	 */
 	public ApplicationProgramChooser() {
 		io = new UIO(System.in);
 	}
 	
+	/**
+	 * Prompts for user input, and returns the user's choice as a PossibleChoices object.
+	 * @return The PossibleChoices object referring to the user's selection.
+	 */
 	private PossibleChoices getUserInput() {
         String error_message = "Improper input. Please input an integer between 0 to 4, inclusive.";
         PossibleChoices user_choice;
@@ -45,6 +66,9 @@ public class ApplicationProgramChooser {
         return user_choice;
     }
 	
+	/**
+	 * Prints the welcome screen.
+	 */
 	private void initiateWelcomeScreen() {
         // Print the welcome screen.
         
@@ -56,6 +80,13 @@ public class ApplicationProgramChooser {
         System.out.println("Please enter '4' to exit the program.");
     }
 	
+	/**
+	 * Gets the user input, and returns an ApplicationProgram object based on the
+	 * application program that the user wants to run.
+	 * @return The ApplicationProgram object based on user input.
+	 * @throws SQLException Thrown if the ConnectionManager encounters an error
+	 * while connecting with the Oracle server.
+	 */
 	public ApplicationProgram getApplicationProgram() throws SQLException {
 		if (connection == null)
 	        connection = (new ConnectionManager(io)).getConnection();
@@ -77,11 +108,13 @@ public class ApplicationProgramChooser {
         		return new SearchEngine(connection, io);
         		
         	case QUIT:
-        		io.cleanUp(); // Ask the UIO object to close its scanners
+        		// Cleanup io, commit the transactions, and close the connection.
+        		io.cleanUp();
         		connection.commit();
         		connection.close();
         		return null;
         	default:
+        		// Error occurred. Cleanup io, rollback transactions, and close the connection. 
         		System.out.println("Invalid choice.");
         		io.cleanUp();
         		connection.rollback();
