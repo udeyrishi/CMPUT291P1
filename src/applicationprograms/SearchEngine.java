@@ -8,26 +8,55 @@ import prescriptionentities.Patient;
 import prescriptionentities.Test;
 import common.*;
 
+/**
+ * 
+ * SearchEngine is one of the four main modules of this
+ * program. Search is responsible for searching three
+ * different queries.
+ *
+ */
 public class SearchEngine extends ApplicationProgram {
-
+	
+	/**
+     * Constructor.
+     * @param connection is a Connection object connecting
+     * to the remote database.
+     * @param io is a UIO object for interacting with user.
+     */
 	public SearchEngine(Connection connection, UIO io) {
 		super(connection, io);
 	}
 
+	/**
+	 * Primary method responsible for running a loop asking
+	 * for search number and processing.
+	 */
 	@Override
 	public void run() {
-		String prompt = "Search: ";
 		printInstructionHelp();
-		handleInput(ioproc.getInputInteger(prompt));
+		while (true) {
+			int quit = ioproc.getInputInteger("");
+			if (quit == 4) break;
+			handleInput(quit);
+		}
 	}
 
+	/**
+	 * Print information when search module is started.
+	 */
 	private void printInstructionHelp() {
 		System.out.println("Enter:");
 		System.out.println("1 to get a patient's test history");
 		System.out.println("2 to get a doctor's prescription history");
 		System.out.println("3 to get at risk patients for a test type");
+		System.out.println("4 to quit");
 	}
 
+	/**
+	 * This method is responsible for executing the
+	 * correct query based on choice.
+	 * @param choice
+	 */
 	private void handleInput(int choice) {
 		try {
 			if (choice == 1) getPatientTestHistory();
@@ -43,6 +72,13 @@ public class SearchEngine extends ApplicationProgram {
 		}
 	}
 
+	/**
+	 * Get patient name or ID for the first query 
+	 * and print query results. Print a patients 
+	 * test history.
+	 * @throws NumberFormatException
+	 * @throws SQLException
+	 */
 	public void getPatientTestHistory() throws NumberFormatException, SQLException {
 		String input_patient = ioproc.getInputString("Please enter patient name or number: ");
 		Patient patient = new Patient(connection, ioproc);
@@ -55,6 +91,13 @@ public class SearchEngine extends ApplicationProgram {
 		}
 	}
 
+	/**
+	 * Return a ResultSet containing the results of the first
+	 * query based on the patient_num specified.
+	 * @param patient_num
+	 * @return
+	 * @throws SQLException
+	 */
 	private ResultSet queryPatientHistory(Integer patient_num) throws SQLException {
 		String query = String.format("SELECT tr.patient_no, p.name, "
 				+ "tt.test_name, tr.test_date, tr.result "
@@ -67,6 +110,12 @@ public class SearchEngine extends ApplicationProgram {
 		return connection.createStatement().executeQuery(query);
 	}
 
+	/**
+	 * Print the rset containing the results of the first
+	 * query.
+	 * @param rset
+	 * @throws SQLException
+	 */
 	private void printPatientHistory(ResultSet rset) throws SQLException {
 		// tr.patient_no, p.name, tt.test_name, tr.test_date, tr.result
 		while (rset.next()) {
@@ -78,6 +127,13 @@ public class SearchEngine extends ApplicationProgram {
 		}
 	}
 
+	/**
+	 * Prompts user for employee number or name and prints
+	 * the results after querying the database. The second
+	 * query is to return a doctors prescriptions in a certain
+	 * time range.
+	 * @throws SQLException
+	 */
 	public void getDoctorsPrescriptionsWithinRange() throws SQLException {
 		String input_doc = ioproc.getInputString("Please enter employee name or number: ");
 		Employee doctor = new Employee(connection, ioproc);
@@ -90,6 +146,13 @@ public class SearchEngine extends ApplicationProgram {
 		}
 	}
 
+	/**
+	 * Return a ResultSet containing the results of the second
+	 * query based on the doc_id specified.
+	 * @param doc_id
+	 * @return
+	 * @throws SQLException
+	 */
 	private ResultSet queryDocPrescriptionsWithinRange(Integer doc_id) throws SQLException {
 		Date[] date_range = getDateRange();
 		String query = String.format("SELECT tr.patient_no, p.name, "
@@ -106,6 +169,12 @@ public class SearchEngine extends ApplicationProgram {
 		return connection.createStatement().executeQuery(query);
 	}
 
+	/**
+	 * Print the rset containing the results of the second
+	 * query.
+	 * @param rset
+	 * @throws SQLException
+	 */
 	private void printPrescriptions(ResultSet rset) throws SQLException {
 		// tr.patient_no, p.name, tt.test_name, tr.prescribe_date
 		while (rset.next()) {
@@ -116,22 +185,29 @@ public class SearchEngine extends ApplicationProgram {
 		}
 	}
 
+	/**
+	 * Prompts user for test_type and prints 
+	 * the results after querying the database. The third
+	 * query is to return the patients that have reached 
+	 * the alarming age for a given test_type.
+	 * @throws SQLException
+	 */
 	public void getAtRiskPatientsForTest() throws SQLException {
 		String input_test = ioproc.getInputString("Please enter test name: ");
 		Test test = new Test(connection, ioproc);
 		printAtRiskPatients(queryAtRiskPatientsForTest(test.getIDFromName(input_test)));
 	}
 
+	/**
+	 * Return a ResultSet containing the results of the third
+	 * query based on the test_type specified.
+	 * 
+	 * NOTE: QUERY IS MOSTLY EXACTLY AS ASSIGN2 SOLUTIONS
+	 * @param test_type
+	 * @return
+	 * @throws SQLException
+	 */
 	private ResultSet queryAtRiskPatientsForTest(int test_type) throws SQLException {
-		/*
-		Display the health_care_no, name, address,
-		and phone number of all patients,
-		who have reached the alarming age of the given test type
-		but have never taken a test of that type
-		by requesting the test type name.
-
-		NOTE: QUERY IS MOSTLY EXACTLY AS ASSIGN2 SOLUTIONS
-		*/
 		String query = String.format("SELECT distinct p.health_care_no, p.name, p.address, p.phone "
 									+ "FROM test_record tr, patient p "
 									+ "WHERE tr.patient_no = p.health_care_no and "
@@ -165,6 +241,12 @@ public class SearchEngine extends ApplicationProgram {
 		return connection.createStatement().executeQuery(query);
 	}
 
+	/**
+	 * Print the rset containing the results of the third
+	 * query.
+	 * @param rset
+	 * @throws SQLException
+	 */
 	private void printAtRiskPatients(ResultSet rset) throws SQLException {
 		// p.health_care_no, p.name, p.address, p.phone
 		while (rset.next()) {
@@ -175,6 +257,11 @@ public class SearchEngine extends ApplicationProgram {
 		}
 	}
 
+	/**
+	 * Returns a "tuple" of dates where the first
+	 * date is before the second date. 
+	 * @return
+	 */
 	private Date[] getDateRange() {
 		Date[] range = new Date[2];
 		range[0] = ioproc.getInputDate("From: ");
@@ -186,6 +273,11 @@ public class SearchEngine extends ApplicationProgram {
 		return range;
 	}
 
+	/**
+	 * Wrapper around Integer.valueOf that makes
+	 * it more convenient to check if a string can
+	 * be converted to an Integer.
+	 */
 	private Boolean isInteger(String whatisit) {
 		try {
 			Integer.valueOf(whatisit);
@@ -195,23 +287,3 @@ public class SearchEngine extends ApplicationProgram {
 		}
 	}
 }
-
-/*
-Display the health_care_no, name, address,
-and phone number of all patients,
-who have reached the alarming age of the given test type
-but have never taken a test of that type
-by requesting the test type name.
-
-List the
-health_care_no, patient name, test type name,
-prescribing date of all tests
-prescribed by a given doctor during a specified time period.
-The user needs to enter the name or employee_no of the doctor,
-and the starting and ending dates between which tests are prescribed.
-
-List the
-health_care_no, patient name, test type name,
-testing date, and test result of all test records
-by inputing health_care_no or a patient name
-*/

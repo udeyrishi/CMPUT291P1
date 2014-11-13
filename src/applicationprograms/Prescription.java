@@ -13,7 +13,6 @@ import common.*;
 /**
  * The class that handles the "Prescription" application program.
  * Allows a medical doctor to prescribe a medical test to a patient.
- * @author udeyrishi
  *
  */
 public class Prescription extends ApplicationProgram {
@@ -22,12 +21,11 @@ public class Prescription extends ApplicationProgram {
 	private PrescriptionEntity[] data;
 	
 	/**
-	 * 
-	 * Constructor
-	 * @param connection The java.sql.Connection object. The connection to the remote
-	 * server should have been established.
-	 * @throws IllegalArgumentException is thrown if connection to the server is not established.
-	 */
+     * Constructor.
+     * @param connection is a Connection object connecting
+     * to the remote database.
+     * @param io is a UIO object for interacting with user.
+     */
 	public Prescription(Connection connection, UIO io) {
 		super(connection, io);
 		data = new PrescriptionEntity[3];
@@ -37,20 +35,18 @@ public class Prescription extends ApplicationProgram {
 		data[2] = new Test(connection, io);
 	}
 	
+	
 	/**
-	 * Takes the prescription input, and updates the database.
-	 * @throws SQLException
+	 * Primary method responsible for running a loop asking
+	 * for prescription information and updating the database.
 	 */
 	@Override
 	public void run() throws SQLException {
 		printWelcomeMessage();
-		Boolean cont = true;
-		while(cont) {
-			if (promptForInput())
-				updateDB();
-			String input = ioproc.getInputString("Press 'm' to return to main menu; any other key to add another prescription.");
-			if (input.equalsIgnoreCase("m"))
-				cont = false;
+		while (true) {
+			if (promptForInput()) updateDB();
+			int quit = ioproc.getInputInteger("Return to main menu? (1/0 for yes/no) ");
+			if (quit == 1) break;
 		}
 	}
 	
@@ -63,21 +59,19 @@ public class Prescription extends ApplicationProgram {
 		if (checkAllowed()) {
 			storeTestRecords();
 			System.out.println("Prescription added.");
-		}
-		else
+		} else {
 			System.out.println(String.format("Patient %s is not allowed to take the test %s. Prescription not added.", 
-					data[1].getName(), // Patient name 
-					data[2].getName() // Test name
-					));
-		
+							data[1].getName(), // Patient name 
+							data[2].getName() // Test name
+							));
+		}
 	}
 
 	/**
-	 * Populates all members of the data array by prompting the user for appropriate
-	 * inputs.
+	 * Populates all members involved in a prescription
+	 * by prompting the user for appropriate inputs.
 	 * @throws SQLException
 	 */
-	
 	private Boolean promptForInput() throws SQLException {
 		for (PrescriptionEntity entity : data) {
 			if (entity.recordInfo())
@@ -122,14 +116,16 @@ public class Prescription extends ApplicationProgram {
 					);
 	}
 
+	/**
+	 * Update the new entry in database with a correct test_id
+	 * based on the current max in the database.
+	 * @throws SQLException
+	 */
 	private void updateTestID() throws SQLException {
-		String query = "SELECT * FROM test_record WHERE test_id = ";
-		int count = 0;
-		while(PrescriptionEntity.isResultNonEmpty(query + (++test_id).toString(), connection)) {
-			++count;
-			if (count == 0) // Overflow happened
-				throw new SQLException("Max test record limit reached");
-		}
+		String query = "SELECT max(test_id) FROM test_record";
+		ResultSet rset = connection.createStatement().executeQuery(query);
+		rset.next();
+		test_id = rset.getInt(1) + 1;
 	}
 
 	/**
@@ -137,7 +133,7 @@ public class Prescription extends ApplicationProgram {
 	 * @return The current system date.
 	 */
 	private String getCurrentDate() {
-		return (new SimpleDateFormat("dd-MMM-YYYY")).format(Calendar.getInstance().getTime());
+		return (new SimpleDateFormat("dd-MMM-yyyy")).format(Calendar.getInstance().getTime());
 	}
 
 	/**
@@ -152,5 +148,4 @@ public class Prescription extends ApplicationProgram {
 		System.out.println(Heading);
 		System.out.println(dashes.toString());
 	}
-
 }
