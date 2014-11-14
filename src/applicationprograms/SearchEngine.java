@@ -33,23 +33,31 @@ public class SearchEngine extends ApplicationProgram {
 	 */
 	@Override
 	public void run() {
-		printInstructionHelp();
+		printWelcomeMessage();
 		while (true) {
-			int quit = ioproc.getInputInteger("");
-			if (quit == 4) break;
-			handleInput(quit);
+			printInstructionHelp();
+			int choice = ioproc.getInputInteger("");
+			if (choice == 4) break;
+			handleInput(choice);
 		}
 	}
-
+	
+	/**
+	 * Print information when search module is started.
+	 */
+	private void printWelcomeMessage() {
+		System.out.println("\nSEARCH ENGINE APPLICATION");
+		System.out.println("This application allows you to search the database for medical test information.");
+	}
+	
 	/**
 	 * Print information when search module is started.
 	 */
 	private void printInstructionHelp() {
-		System.out.println("Enter:");
-		System.out.println("1 to get a patient's test history");
-		System.out.println("2 to get a doctor's prescription history");
-		System.out.println("3 to get at risk patients for a test type");
-		System.out.println("4 to quit");
+		System.out.println("\nEnter '1' to obtain a patient's test history.");
+		System.out.println("Enter '2' to obtain a doctor's prescription history.");
+		System.out.println("Enter '3' to obtain a list of patients who have reached an alarming age for a particular test.");
+		System.out.println("Enter '4' to quit this application.");
 	}
 
 	/**
@@ -62,7 +70,7 @@ public class SearchEngine extends ApplicationProgram {
 			if (choice == 1) getPatientTestHistory();
 			else if (choice == 2) getDoctorsPrescriptionsWithinRange();
 			else if (choice == 3) getAtRiskPatientsForTest();
-			else System.out.println("Invalid choice");
+			else System.out.println("Invalid choice.");
 		} catch (NumberFormatException nfe) {
 			System.out.println(nfe.getMessage());
 		} catch (IllegalArgumentException iae) {
@@ -80,7 +88,7 @@ public class SearchEngine extends ApplicationProgram {
 	 * @throws SQLException
 	 */
 	public void getPatientTestHistory() throws NumberFormatException, SQLException {
-		String input_patient = ioproc.getInputString("Please enter patient name or number: ");
+		String input_patient = ioproc.getInputString("\nPlease enter the patient's name or health care number: ");
 		Patient patient = new Patient(connection, ioproc);
 
 		if (isInteger(input_patient)) {
@@ -117,7 +125,6 @@ public class SearchEngine extends ApplicationProgram {
 	 * @throws SQLException
 	 */
 	private void printPatientHistory(ResultSet rset) throws SQLException {
-		// tr.patient_no, p.name, tt.test_name, tr.test_date, tr.result
 		while (rset.next()) {
 			System.out.println(rset.getInt(1) + ", " +
 							 	rset.getString(2) + ", " +
@@ -135,7 +142,7 @@ public class SearchEngine extends ApplicationProgram {
 	 * @throws SQLException
 	 */
 	public void getDoctorsPrescriptionsWithinRange() throws SQLException {
-		String input_doc = ioproc.getInputString("Please enter employee name or number: ");
+		String input_doc = ioproc.getInputString("\nPlease enter the doctor's name or his/her employee number: ");
 		Employee doctor = new Employee(connection, ioproc);
 
 		if (isInteger(input_doc)) {
@@ -162,7 +169,7 @@ public class SearchEngine extends ApplicationProgram {
 				+ "tr.employee_no = d.employee_no AND "
 				+ "tr.patient_no = p.health_care_no AND "
 				+ "tr.type_id = tt.type_id AND "
-				+ "tr.prescribe_date BETWEEN '%s' AND '%s'",
+				+ "tr.prescribe_date BETWEEN %s AND %s",
 				doc_id, ioproc.getTestDateInSQLDateStringForm(date_range[0]),
 				ioproc.getTestDateInSQLDateStringForm(date_range[1]));
 
@@ -176,7 +183,6 @@ public class SearchEngine extends ApplicationProgram {
 	 * @throws SQLException
 	 */
 	private void printPrescriptions(ResultSet rset) throws SQLException {
-		// tr.patient_no, p.name, tt.test_name, tr.prescribe_date
 		while (rset.next()) {
 			System.out.println(rset.getInt(1) + ", " +
 							 	rset.getString(2) + ", " +
@@ -193,7 +199,8 @@ public class SearchEngine extends ApplicationProgram {
 	 * @throws SQLException
 	 */
 	public void getAtRiskPatientsForTest() throws SQLException {
-		String input_test = ioproc.getInputString("Please enter test name: ");
+		System.out.println("\nPlease enter the test name.");
+		String input_test = ioproc.getInputString("If no results appear, then no patient has reached the alarming age for the test. ");
 		Test test = new Test(connection, ioproc);
 		printAtRiskPatients(queryAtRiskPatientsForTest(test.getIDFromName(input_test)));
 	}
@@ -248,7 +255,6 @@ public class SearchEngine extends ApplicationProgram {
 	 * @throws SQLException
 	 */
 	private void printAtRiskPatients(ResultSet rset) throws SQLException {
-		// p.health_care_no, p.name, p.address, p.phone
 		while (rset.next()) {
 			System.out.println(rset.getInt(1) + ", " +
 							 	rset.getString(2) + ", " +
@@ -264,10 +270,10 @@ public class SearchEngine extends ApplicationProgram {
 	 */
 	private Date[] getDateRange() {
 		Date[] range = new Date[2];
-		range[0] = ioproc.getInputDate("From: ");
-		range[1] = ioproc.getInputDate("To: ");
+		range[0] = ioproc.getInputDate("Please enter the 'from' date (YYYY-MM-DD): ");
+		range[1] = ioproc.getInputDate("Please enter the 'to' date (YYYY-MM-DD): ");
 		if (range[0].after(range[1])) {
-			System.out.println("From must be before To");
+			System.out.println("The 'from' date must be before the 'to' date!");
 			return getDateRange();
 		}
 		return range;

@@ -31,7 +31,7 @@ public abstract class ApplicationProgram {
 			throw new IllegalArgumentException("SQLException was thrown while trying to use the Connection object. Invalid connection object passed.");
 		}
 		
-		// Everything is valid
+		// Connection and io is valid.
 		this.connection = connection;
 		this.ioproc = io;
 	}

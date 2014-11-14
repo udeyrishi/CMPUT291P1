@@ -26,8 +26,8 @@ public class ConnectionManager {
     	String username = io.getInputString("Please enter your SQL Plus username: ");
         String password = io.getInputString("Please enter your SQL Plus password: ");
         //Use this on lab computers:
-        //String url = "jdbc:oracle:thin:@gwynne.cs.ualberta.ca:1521:CRS";
-        String url = "jdbc:oracle:thin:@localhost:1525:CRS";
+        String url = "jdbc:oracle:thin:@gwynne.cs.ualberta.ca:1521:CRS";
+        //String url = "jdbc:oracle:thin:@localhost:1525:CRS";
         String m_driverName = "oracle.jdbc.driver.OracleDriver";
         
         try {

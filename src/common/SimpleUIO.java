@@ -105,7 +105,7 @@ public class SimpleUIO {
 	 */
 	public String getTestDateInSQLDateStringForm(Date date) {
 		String rv = (new SimpleDateFormat("dd-MMM-yyyy")).format(date);
-		return String.format("to_date('%s','DD-MON-YYYY')", rv);
+	    return String.format("to_date('%s','DD-MON-YYYY')", rv); 
 	}
 	
 }

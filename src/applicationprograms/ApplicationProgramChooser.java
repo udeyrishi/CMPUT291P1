@@ -73,7 +73,7 @@ public class ApplicationProgramChooser {
         // Print the welcome screen.
         
         System.out.println("\nWelcome to the Health Care Application System!");
-        System.out.println("Any change to the database will only be committed upon successful exit of the program.\n");
+        System.out.println("Any change to the database will only be committed upon successful exit of an application program.\n");
         System.out.println("Please enter '0' to initiate the Prescription program.");
         System.out.println("Please enter '1' to initiate the Medical Test program.");
         System.out.println("Please enter '2' to initiate the Patient Information Update program.");

@@ -79,6 +79,7 @@ public class MedicalTest extends ApplicationProgram {
 	 */
 	private void printSuccess() {
 		System.out.println("Successfully updated medical test.");
+		System.out.println("The changes will be committed to the database upon exiting this application program.");
 	}
 	
 	/**

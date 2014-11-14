@@ -38,7 +38,7 @@ public class PatientUpdate extends ApplicationProgram {
     @Override
     public void run() throws SQLException {
         // Main portion of the PatientUpdate application.
-        // Loops until the user enters '-1'.
+        // Loops endlessly until the user enters '-1'.
         
         while (true) {
             printWelcomeMessage();
@@ -46,7 +46,6 @@ public class PatientUpdate extends ApplicationProgram {
             if (patient_health_care_no == -1) break;
             if (inDatabase(patient_health_care_no)) runUpdateSequence();
             else createNewPatient();
-            System.out.println("The patient has been updated successfully!");
         }
     }
     
@@ -61,6 +60,7 @@ public class PatientUpdate extends ApplicationProgram {
         obtainPatientName();
         obtainExtraPatientInformation();
         updatePatient();
+        printSuccessMessage();    
     }
     
     /**
@@ -86,10 +86,10 @@ public class PatientUpdate extends ApplicationProgram {
      * @throws SQLException
      */
     private void updatePatient() throws SQLException {
-        if (!isSkip(patient_name)) { updateTable("patient", "name", patient_name); }
-        if (!isSkip(patient_address)) { updateTable("patient", "address", patient_address); }
+        if (!isSkip(patient_name)) { updateTable("patient", "name", surroundWithQuotes(patient_name)); }
+        if (!isSkip(patient_address)) { updateTable("patient", "address", surroundWithQuotes(patient_address)); }
         if (!isSkip(patient_birthday)) { updateTable("patient", "birth_day", ioproc.getTestDateInSQLDateStringForm(patient_birthday)); }
-        if (!isSkip(patient_phonenumber)) { updateTable("patient", "phone", patient_phonenumber); }
+        if (!isSkip(patient_phonenumber)) { updateTable("patient", "phone", surroundWithQuotes(patient_phonenumber)); }
         if (!isSkip(patient_tests_not_allowed)) { 
             for (String test_id : patient_tests_not_allowed) {
                 insertToTable("not_allowed", "health_care_no, type_id", Integer.toString(patient_health_care_no) + ", " + test_id.trim());
@@ -106,13 +106,14 @@ public class PatientUpdate extends ApplicationProgram {
      */
     private void createNewPatient() throws SQLException {
         printNewPatientMessage();
-        String choice = ioproc.getInputString("Enter 'yes' if so; otherwise, enter any other characters. ");
+        String choice = ioproc.getInputString("Enter 'yes' if so; otherwise, enter any other character. ");
         if (choice.equals("yes")) {
             patient_name = ioproc.getInputString("Please enter the full name of the new patient. ");
             insertToTable("patient", "health_care_no, name", Integer.toString(patient_health_care_no) + ", " + "'" + patient_name + "'");
+            obtainExtraPatientInformation();
+            updatePatient();
+            printSuccessMessage();
         }
-        obtainExtraPatientInformation();
-        updatePatient();
     }
     
     /**
@@ -150,6 +151,15 @@ public class PatientUpdate extends ApplicationProgram {
     }
     
     /**
+     * Method to add quotes around any given string.
+     * @param s can be any string
+     * @return the string with surrounding quotes added.
+     */
+    private String surroundWithQuotes(String s) {
+    	return "'" + s + "'";
+    }
+    
+    /**
      * Generic fill-in-the-blank SQL command for updating a table.
      * @param table
      * @param field
@@ -158,7 +168,7 @@ public class PatientUpdate extends ApplicationProgram {
      */
     private void updateTable(String table, String field, String value) throws SQLException {  
         String update = "UPDATE " + table + " "
-                      + "SET " + field + " = " + "'" + value + "' "
+                      + "SET " + field + " = " + value + " " 
                       + "WHERE health_care_no = " + patient_health_care_no;
         connection.createStatement().executeUpdate(update);
     }
@@ -180,7 +190,7 @@ public class PatientUpdate extends ApplicationProgram {
     /**
      * Checks if a health care number already exists in the database.
      * @param health_care_no
-     * @return
+     * @return 
      * @throws SQLException
      */
     private boolean inDatabase(int health_care_no) throws SQLException {
@@ -206,7 +216,7 @@ public class PatientUpdate extends ApplicationProgram {
      * Prompts user to verify that a new user needs to be created.
      */
     private void printNewPatientMessage() {
-        System.out.println("This health care number was not found in the database.");
+        System.out.println("\nThis health care number was not found in the database.");
         System.out.println("Would you like to create a new entry in the database using this health care number?");
     }
     
@@ -214,9 +224,18 @@ public class PatientUpdate extends ApplicationProgram {
      * Print welcome message.
      */
     private void printWelcomeMessage() {
-        System.out.println("\nWelcome to the Patient Information Update application.");
+        System.out.println("\nPATIENT INFORMATION UPDATE APPLICATION");
+        System.out.println("This application allows you to update the information of a patient.\n");
         System.out.println("To begin, enter the health care number of the patient you would like to update.");
         System.out.println("If the health care number is not found in the database, a new entry will be made for you.");
         System.out.println("Enter '-1' to leave this application.");
+    }
+    
+    /**
+     * Print success message.
+     */
+    private void printSuccessMessage() {
+    	System.out.println("\nThe patient information has been updated successfully!");
+    	System.out.println("The changes will be committed to the database upon exiting this application program.");
     }
 }

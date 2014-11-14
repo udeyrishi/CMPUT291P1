@@ -59,6 +59,7 @@ public class Prescription extends ApplicationProgram {
 		if (checkAllowed()) {
 			storeTestRecords();
 			System.out.println("Prescription added.");
+			System.out.println("The changes will be committed to the database upon exiting this application program.");
 		} else {
 			System.out.println(String.format("Patient %s is not allowed to take the test %s. Prescription not added.", 
 							data[1].getName(), // Patient name 

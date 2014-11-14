@@ -32,7 +32,7 @@ public class Main {
 			try {
 				APC.abandonChangesAndClose();
 			} catch (SQLException e) {
-				// Nothing can be done here...
+				// Error has occurred and nothing can be done here.
 				System.out.println("abandonChangesAndClose failed.");
 			}
 		}
@@ -48,7 +48,7 @@ public class Main {
 			try {
 				APC.abandonChangesAndClose();
 			} catch (SQLException e1) {
-				// Nothing can be done here...
+				// Error has occurred and nothing can be done here.
 				System.out.println("abandonChangesAndClose failed.");
 			}
 		}

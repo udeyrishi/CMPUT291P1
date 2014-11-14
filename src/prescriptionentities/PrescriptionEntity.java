@@ -136,7 +136,7 @@ public abstract class PrescriptionEntity {
 	private Boolean getInfoUsingName() {
 		String name = io.getInputString(String.format("Please enter %s name as it exists in the database: ", description));
 		if (isNameUnique(name)) {
-			// Success
+			// Success.
 			this.name = name;
 			try {
 				this.ID = getIDFromName(name);
@@ -150,7 +150,7 @@ public abstract class PrescriptionEntity {
 			return true;
 		}
 		else
-			// Failure
+			// Failure.
 			return false;
 	}
 
